@@ -14,18 +14,6 @@ hlaProteinOffset:
   DPA1: 0
   DPB1: 0
 refseq:
-  A: A*01:01
-  B: B*07:02
-  C: C*01:02
-  DRB1: DRB1*01:01
-  DRB3: DRB3*01:01
-  DRB4: DRB4*01:01
-  DRB5: DRB5*01:01
-  DQA1: DQA1*01:01
-  DQB1: DQB1*05:01
-  DPA1: DPA1*01:03
-  DPB1: DPB1*01:01
-refseq_full:
   A: A*01:01:01:01
   B: B*07:02:01:01
   C: C*01:02:01:01
@@ -50,17 +38,17 @@ first_ten:
   DPA1*01:03:01:01: IKADHVSTYA
   DPB1*01:01:01:01: RATPENYVYQ
 ard_start_pos:
-  A: 2
-  B: 2
-  C: 2
-  DRB1: 6
-  DRB3: 6
-  DRB4: 6
-  DRB5: 6
-  DQA1: 6
-  DQB1: 6
-  DPA1: 4
-  DPB1: 6
+  A: 0
+  B: 0
+  C: 0
+  DRB1: 0
+  DRB3: 0
+  DRB4: 0
+  DRB5: 0
+  DQA1: 0
+  DQB1: 0
+  DPA1: 0
+  DPB1: 0
 ard_end_pos:
   A: 182
   B: 182
@@ -73,44 +61,18 @@ ard_end_pos:
   DQB1: 94
   DPA1: 84
   DPB1: 92
-# lots of incomplete ARD sequences in IMGT/HLA
-# this should be handled in reference alignment, not here
-ard_start_pos_incomplete:
-  A: 2 # A*02:50
-  B: 2 # B*07:30
-  C: 2 # C*01:10
-  DRB1: 7 # DRB1*08:19
-  DRB3: 2 # TBD
-  DRB4: 2 # TBD
-  DRB5: 2 # TBD
-  DQA1: 6 # DQA1*01:06
-  DQB1: 6 # DQB1*05:100
-  DPA1: 11 # DPA1*01:03:02
-  DPB1: 6 # DPB1*01:01:03
-ard_end_pos_incomplete:
-  A: 182 # A*02:50
-  B: 182 # B*07:30
-  C: 182 # C*01:10
-  DRB1: 92 # DRB1*08:19
-  DRB3: 2 # TBD
-  DRB4: 2 # TBD
-  DRB5: 2 # TBD
-  DQA1: 87 # DQA1*01:06
-  DQB1: 94 # DQB1*05:100
-  DPA1: 84 # DPA1*01:03:02
-  DPB1: 92 # DPB1*01:01:03
 xrd_start_pos:
-  A: 2
-  B: 2
-  C: 2
-  DRB1: 6
-  DRB3: 6
-  DRB4: 6
-  DRB5: 6
-  DQA1: 6
-  DQB1: 6
-  DPA1: 4
-  DPB1: 6
+  A: 0
+  B: 0
+  C: 0
+  DRB1: 0
+  DRB3: 0
+  DRB4: 0
+  DRB5: 0
+  DQA1: 0
+  DQB1: 0
+  DPA1: 0
+  DPB1: 0
 xrd_end_pos:
   A: 274
   B: 274
