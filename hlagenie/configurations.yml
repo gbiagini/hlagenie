@@ -1,10 +1,18 @@
 imgt_version: "Latest"
 DEFAULT_CACHE_SIZE: 1000
+loci:
+  - A
+  - B
+  - C
+  - DRB1
+  - DQA1
+  - DQB1
+  - DPA1
+  - DPB1
 hlaProteinOffset:
   A: 0
   B: 0
   C: 0
-  DRA: 0
   DRB1: 0
   DRB3: 0
   DRB4: 0
@@ -18,9 +26,6 @@ refseq:
   B: B*07:02:01:01
   C: C*01:02:01:01
   DRB1: DRB1*01:01:01:01
-  DRB3: DRB3*01:01:02:01
-  DRB4: DRB4*01:01:01:01
-  DRB5: DRB5*01:01:01:01
   DQA1: DQA1*01:01:01:01
   DQB1: DQB1*05:01:01:01
   DPA1: DPA1*01:03:01:01
@@ -30,9 +35,6 @@ first_ten:
   B*07:02:01:01: GSHSMRYFYT
   C*01:02:01:01: CSHSMKYFFT
   DRB1*01:01:01:01: GDTRPRFLWQ
-  DRB3*01:01:02:01: GDTRPRFLEL
-  DRB4*01:01:01:01: GDTQPRFLEQ
-  DRB5*01:01:01:01: GDTRPRFLQQ
   DQA1*01:01:01:01: EDIVADHVAS
   DQB1*05:01:01:01: RDSPEDFVYQ
   DPA1*01:03:01:01: IKADHVSTYA
@@ -42,9 +44,6 @@ ard_start_pos:
   B: 0
   C: 0
   DRB1: 0
-  DRB3: 0
-  DRB4: 0
-  DRB5: 0
   DQA1: 0
   DQB1: 0
   DPA1: 0
@@ -54,9 +53,6 @@ ard_end_pos:
   B: 182
   C: 182
   DRB1: 94
-  DRB3: 94
-  DRB4: 94
-  DRB5: 94
   DQA1: 87
   DQB1: 94
   DPA1: 84
@@ -66,9 +62,6 @@ xrd_start_pos:
   B: 0
   C: 0
   DRB1: 0
-  DRB3: 0
-  DRB4: 0
-  DRB5: 0
   DQA1: 0
   DQB1: 0
   DPA1: 0
@@ -78,9 +71,6 @@ xrd_end_pos:
   B: 274
   C: 274
   DRB1: 188
-  DRB3: 188
-  DRB4: 188
-  DRB5: 188
   DQA1: 181
   DQB1: 188
   DPA1: 178
@@ -90,3 +80,57 @@ expression_chars:
   - Q
   - L
   - S
+gapped_tables:
+  - A_gapped
+  - B_gapped
+  - C_gapped
+  - DRB1_gapped
+  - DQA1_gapped
+  - DQB1_gapped
+  - DPA1_gapped
+  - DPB1_gapped
+ungapped_tables:
+  - A_ungapped
+  - B_ungapped
+  - C_ungapped
+  - DRB1_ungapped
+  - DQA1_ungapped
+  - DQB1_ungapped
+  - DPA1_ungapped
+  - DPB1_ungapped
+completed_tables:
+  - A_completed
+  - B_completed
+  - C_completed
+  - DRB1_completed
+  - DQA1_completed
+  - DQB1_completed
+  - DPA1_completed
+  - DPB1_completed
+incomplete_tables:
+  - A_incomplete
+  - B_incomplete
+  - C_incomplete
+  - DRB1_incomplete
+  - DQA1_incomplete
+  - DQB1_incomplete
+  - DPA1_incomplete
+  - DPB1_incomplete
+extended_tables:
+  - A_extended
+  - B_extended
+  - C_extended
+  - DRB1_extended
+  - DQA1_extended
+  - DQB1_extended
+  - DPA1_extended
+  - DPB1_extended
+position_tables:
+  - A_position
+  - B_position
+  - C_position
+  - DRB1_position
+  - DQA1_position
+  - DQB1_position
+  - DPA1_position
+  - DPB1_position

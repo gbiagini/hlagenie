@@ -5,11 +5,12 @@
 # import necessary modules
 from pathlib import Path  # for path manipulation
 import pyard  # for HLA nomenclature
-import yaml  # for reading YAML files
-import db_ops  # for database operations
+from . import db  # for database operations
+from . import data_repository as dr  # for data repository operations
+from .configs import config  # for configurations
 
 
-class genie:
+class GENIE:
     """
     Matching functions for HLA alleles
     Allows for matching of HLA alleles at the amino acid level
@@ -19,15 +20,23 @@ class genie:
         self,
         imgt_version: str = "Latest",
         data_dir: str = None,
-        max_cache_size: int = DEFAULT_CACHE_SIZE,
-        config: dict = None,
+        cache_size: int = config["DEFAULT_CACHE_SIZE"],
         ungap=True,
     ):
         # set values for needed variables
         self._data_dir = data_dir
 
+        # add an ard object
+        self.ard = pyard.init(imgt_version)
+
         # create database connection to SQLite database
-        self.db_connection = db_ops.create_db_connection(data_dir, imgt_version)
+        self.db_connection = db.create_db_connection(data_dir, imgt_version)
+
+        # load sequence data from database
+        if ungap:
+            self.seqs = dr.generate_ungapped_tables(self.db_connection, imgt_version)
+        else:
+            self.seqs = dr.generate_gapped_tables(self.db_connection, imgt_version)
 
     def getAAposition(self, allele, position):
         """
@@ -36,6 +45,9 @@ class genie:
         :param allele: The allele to get the amino acid from
         :param position: The position to get the amino acid from
         """
+
+        if allele.count(":") > 1:
+            allele = self.ard.redux(allele, "U2")
 
         # get the amino acid at the specified position
         return self.seqs[allele][position - 1]
@@ -49,6 +61,9 @@ class genie:
         :param stop: The position to end the substring
         """
 
+        if allele.count(":") > 1:
+            allele = self.ard.redux(allele, "U2")
+
         # get the amino acid substring
         return self.seqs[allele][start - 1 : stop]
 
@@ -59,6 +74,9 @@ class genie:
         :param allele: The allele to get the epitope from
         :param positions: A list of positions to retrieve the epitope from
         """
+
+        if allele.count(":") > 1:
+            allele = self.ard.redux(allele, "U2")
 
         # get the epitope string
         return "_".join(
@@ -73,6 +91,11 @@ class genie:
         :param allele2: The second allele to check
         :param position: The position to check
         """
+
+        if allele1.count(":") > 1:
+            allele1 = self.ard.redux(allele1, "U2")
+        if allele2.count(":") > 1:
+            allele2 = self.ard.redux(allele2, "U2")
 
         # get the amino acid at the specified position for each allele
         aa1 = self.getAAposition(allele1, position)
@@ -93,6 +116,14 @@ class genie:
         :param allele2recip: The second allele of the recipient to check
         :param position: The position to check
         """
+        if allele1donor.count(":") > 1:
+            allele1donor = self.ard.redux(allele1donor, "U2")
+        if allele2donor.count(":") > 1:
+            allele2donor = self.ard.redux(allele2donor, "U2")
+        if allele1recip.count(":") > 1:
+            allele1recip = self.ard.redux(allele1recip, "U2")
+        if allele2recip.count(":") > 1:
+            allele2recip = self.ard.redux(allele2recip, "U2")
 
         # check if donor is homozygous
         donor_homozygous = False
@@ -111,5 +142,25 @@ class genie:
         # adjust if donor is homozygous, due to mismatch being same AA
         if (mm_count == 2) and (donor_homozygous):
             mm_count = 1
+
+        return mm_count
+
+    def countAAMismatches(self, aa1_donor, aa2_donor, aa1_recip, aa2_recip):
+        """
+        Count the number of amino acid mismatches at a position bewteen donor and recipient
+
+        :param aa1_donor: The first amino acid of the donor to check
+        :param aa2_donor: The second amino acid of the donor to check
+        :param aa1_recip: The first amino acid of the recipient to check
+        :param aa2_recip: The second amino acid of the recipient to check
+        :return: The number of amino acid mismatches
+        """
+
+        # count mismatches between donor and recipient
+        mm_count = 0
+        if (aa1_donor != aa1_recip) and (aa1_donor != aa2_recip):
+            mm_count += 1
+        if (aa2_donor != aa2_recip) and (aa2_donor != aa1_recip):
+            mm_count += 1
 
         return mm_count

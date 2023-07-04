@@ -1,4 +1,15 @@
+import pytest
 import hlagenie
+
+# create an object for testing
+aa_mm = hlagenie.init("3510")
+
+# set known alleles for testing
+allele1 = "A*02:01"
+allele2 = "A*01:01"
+
+# set known position for testing
+position1 = 8
 
 
 # test getAAposition function
@@ -38,3 +49,9 @@ def test_countAAMismatches():
     # this is directional, so if the recipient has either AA from the donor, it's not a mismatch
     assert aa_mm.countAAMismatches("Y", "Y", "D", "D") == 2
     assert aa_mm.countAAMismatches("Y", "Y", "Y", "D") == 0
+
+
+# test handling of deleted alleles
+# def test_deleted_alleles():
+#     assert aa_mm.getAAposition("B*38:158", 180) == "Q"
+#     assert aa_mm.getAAposition("B*38:158", 178) == "T"

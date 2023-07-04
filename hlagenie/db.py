@@ -1,6 +1,10 @@
 import sqlite3  # for database operations
 import pathlib  # for path manipulation
-import misc  # for getting IMGT database versions
+from .misc import (
+    get_imgt_db_versions,
+    get_default_db_directory,
+)  # for getting default database directory
+from hlagenie.configs import config  # configurations
 
 
 def create_db_connection(data_dir, imgt_version):
@@ -12,13 +16,17 @@ def create_db_connection(data_dir, imgt_version):
     :return: The database connection
     """
 
+    # set data directory
+    if data_dir is None:
+        data_dir = get_default_db_directory()
+
     # set database filename
     db_filename = f"{data_dir}/hlagenie-{imgt_version}.db"
 
     # Check if imgt_version is valid
     if imgt_version != "Latest":
         if not pathlib.Path(db_filename).exists():
-            all_versions = misc.get_imgt_db_versions()
+            all_versions = get_imgt_db_versions()
             if str(imgt_version) not in all_versions:
                 raise ValueError(f"{imgt_version} is not a valid IMGT version")
 
@@ -50,7 +58,7 @@ def table_exists(connection: sqlite3.Connection, table_name: str) -> bool:
     return result[0] > 0
 
 
-def tables_exist(connection: sqlite3.Connection, table_names: List[str]):
+def tables_exist(connection: sqlite3.Connection, table_names: list[str]):
     """
     Do all the given tables exist in the database ?
 
@@ -79,8 +87,8 @@ def count_rows(connection: sqlite3.Connection, table_name: str) -> int:
 def save_dict(
     connection: sqlite3.Connection,
     table_name: str,
-    dictionary: Dict[str, str],
-    columns: Tuple[str, str],
+    dictionary: dict[str, str],
+    columns: tuple[str, str],
 ) -> bool:
     """
     Save the dictionary as a table with column names from columns Tuple.
@@ -116,7 +124,7 @@ def save_dict(
 
 
 def save_set(
-    connection: sqlite3.Connection, table_name: str, rows: Set, column: str
+    connection: sqlite3.Connection, table_name: str, rows: set, column: str
 ) -> bool:
     """
     Save the set rows to the table table_name in the column
@@ -155,7 +163,7 @@ def save_set(
     return True
 
 
-def load_set(connection: sqlite3.Connection, table_name: str, column: str) -> Set:
+def load_set(connection: sqlite3.Connection, table_name: str, column: str) -> set:
     """
     Retrieve the first column of the table as a set
 
@@ -173,8 +181,8 @@ def load_set(connection: sqlite3.Connection, table_name: str, column: str) -> Se
 
 
 def load_dict(
-    connection: sqlite3.Connection, table_name: str, columns: Tuple[str, str]
-) -> Dict[str, str]:
+    connection: sqlite3.Connection, table_name: str, columns: tuple[str, str]
+) -> dict[str, str]:
     """
     Retrieve the values in columns as a name, value pair and create a dict.
 
@@ -222,3 +230,45 @@ def set_user_version(connection: sqlite3.Connection, version: int):
     connection.commit()
     # close the cursor
     cursor.close()
+
+
+def load_gapped_tables(connection: sqlite3.Connection):
+    """
+    Return a dictionary of gapped sequence tables
+
+    :param connection: db connection of type sqlite.Connection
+    :return: dict of gapped sequence tables
+    """
+
+    # initialize dictionary to store allele:seq key:value pairs
+    gapped_seqs = {}
+
+    for loc in config["loci"]:
+        # extend the dictionary with each locus
+        gapped_seqs.update(
+            load_dict(connection, table_name=f"{loc}_gapped", columns=("allele", "seq"))
+        )
+
+    return gapped_seqs
+
+
+def load_ungapped_tables(connection: sqlite3.Connection):
+    """
+    Return a dictionary of ungapped sequence tables
+
+    :param connection: db connection of type sqlite.Connection
+    :return: dict of ungapped sequence tables
+    """
+
+    # initialize dictionary to store allele:seq key:value pairs
+    ungapped_seqs = {}
+
+    for loc in config["loci"]:
+        # extend the dictionary with each locus
+        ungapped_seqs.update(
+            load_dict(
+                connection, table_name=f"{loc}_ungapped", columns=("allele", "seq")
+            )
+        )
+
+    return ungapped_seqs

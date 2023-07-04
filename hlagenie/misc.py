@@ -29,7 +29,12 @@ def get_data_dir(data_dir=None):
 
 
 # directly from py-ard
-def get_imgt_db_versions() -> List[str]:
+def get_imgt_db_versions() -> list[str]:
+    """
+    Get a list of all available IMGT/HLA database versions
+
+    :return: list of available IMGT/HLA database versions
+    """
     import urllib.request
     import json
 
@@ -41,3 +46,23 @@ def get_imgt_db_versions() -> List[str]:
         json_body = json.loads(res.read())
         versions = list(map(lambda x: x["name"], json_body))
         return versions
+
+
+# find gap characters in sequence
+def find_gaps(sequence: str):
+    """
+    Identify gap characters in the reference sequence, and return their indices
+
+    :param sequence: reference sequence
+    :return: list of gap indices
+    """
+
+    # create list of gap indices
+    gaps = [i for i, x in enumerate(sequence) if x == "-"]
+
+    return gaps
+
+
+# get default database directory
+def get_default_db_directory():
+    return pathlib.Path(tempfile.gettempdir()) / "hlagenie"
