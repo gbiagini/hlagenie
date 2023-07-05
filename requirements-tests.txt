@@ -1,1 +1,3 @@
 pytest>=7.3.2
+behave>=1.2.6
+PyHamcrest>=2.0.2

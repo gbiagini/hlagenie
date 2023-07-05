@@ -1,3 +1,4 @@
 biopython>=1.81
 requests>=2.31.0
 toml>=0.10.2
+py-ard>=1.0.0
