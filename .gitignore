@@ -103,6 +103,13 @@ ENV/
 # downloaded
 *.pickle
 *.zip
+*.tar.gz
+
+## Table of Contents
+1. [Installation](#installation)
+ - [Install from PyPI](#install-from-pypi)
+ - [Install from source](#install-from-source)
+2. [Using HLAGenie](#using-hlagenie)
 
 # BDD Testing
 testing/
