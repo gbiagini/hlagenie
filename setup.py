@@ -13,7 +13,7 @@ with open("requirements-tests.txt") as requirements_file:
 
 setup(
     name="hlagenie",
-    version="0.0.1",
+    version="0.0.2",
     description="Sequence handing for HLA with Python",
     long_description=readme,
     long_description_content_type="text/markdown",
