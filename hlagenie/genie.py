@@ -34,9 +34,13 @@ class GENIE:
 
         # load sequence data from database
         if ungap:
-            self.seqs = dr.generate_ungapped_tables(self.db_connection, imgt_version)
+            self.full_seqs = dr.generate_ungapped_tables(
+                self.db_connection, imgt_version
+            )
+            self.seqs = dr.generate_ungapped_mature_tables(self.db_connection)
         else:
-            self.seqs = dr.generate_gapped_tables(self.db_connection, imgt_version)
+            self.full_seqs = dr.generate_gapped_tables(self.db_connection, imgt_version)
+            self.seqs = dr.generated_gapped_mature_tables(self.db_connection)
 
     def getAAposition(self, allele, position):
         """
@@ -102,7 +106,7 @@ class GENIE:
         aa2 = self.getAAposition(allele2, position)
 
         # check if the amino acids are the same
-        return aa1 == aa2
+        return not (aa1 == aa2)
 
     def countAAMismatchesAllele(
         self, allele1donor, allele2donor, allele1recip, allele2recip, position

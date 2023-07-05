@@ -66,3 +66,38 @@ def find_gaps(sequence: str):
 # get default database directory
 def get_default_db_directory():
     return pathlib.Path(tempfile.gettempdir()) / "hlagenie"
+
+
+def regex_gen(first_ten: str):
+    """
+    Generate a regex for adjusting to the mature protein sequence
+
+    :param first_ten: first ten amino acids of the mature protein sequence
+    :return: regex for adjusting to the mature protein sequence
+    """
+
+    # TODO - Comment this code
+    regex = ""
+    for i in range(10):
+        regex += f"{first_ten[i]}[^{first_ten}]*?"
+    return regex
+
+
+def coordinate(sequence: str, regex: str):
+    """
+    Find the start coordinates of the mature protein sequence
+
+    :param regex: regex for adjusting to the mature protein sequence
+    :param sequence: reference sequence
+    :return: start coordinates of the mature protein sequence
+    """
+
+    import re  # for regex matching
+
+    # find match
+    match = re.search(regex, sequence)
+
+    # if match is found, return start coordinate
+    start = match.start()
+
+    return start

@@ -14,8 +14,8 @@ position1 = 8
 
 # test getAAposition function
 def test_getAAposition():
-    assert aa_mm.getAAposition(allele1, position1) == "Y"
-    assert aa_mm.getAAposition(allele2, position1) == "Y"
+    assert aa_mm.getAAposition(allele1, position1) == "F"
+    assert aa_mm.getAAposition(allele2, position1) == "F"
     assert aa_mm.getAAposition(allele1, 44) == "R"
     assert aa_mm.getAAposition(allele2, 44) == "K"
     assert aa_mm.getAAposition(allele1, 45) == "M"
@@ -25,7 +25,7 @@ def test_getAAposition():
 # test getAAsubstring function
 def test_getAAsubstring():
     # check first 10 residues
-    assert aa_mm.getAAsubstring(allele1, 0, 10) == "GSHSMRYFFT"
+    assert aa_mm.getAAsubstring(allele1, 1, 10) == "GSHSMRYFFT"
 
 
 # test getEpitope function

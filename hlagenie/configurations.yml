@@ -22,23 +22,23 @@ hlaProteinOffset:
   DPA1: 0
   DPB1: 0
 refseq:
-  A: A*01:01:01:01
-  B: B*07:02:01:01
-  C: C*01:02:01:01
-  DRB1: DRB1*01:01:01:01
-  DQA1: DQA1*01:01:01:01
-  DQB1: DQB1*05:01:01:01
-  DPA1: DPA1*01:03:01:01
-  DPB1: DPB1*01:01:01:01
+  A: A*01:01
+  B: B*07:02
+  C: C*01:02
+  DRB1: DRB1*01:01
+  DQA1: DQA1*01:01
+  DQB1: DQB1*05:01
+  DPA1: DPA1*01:03
+  DPB1: DPB1*01:01
 first_ten:
-  A*01:01:01:01: GSHSMRYFFT
-  B*07:02:01:01: GSHSMRYFYT
-  C*01:02:01:01: CSHSMKYFFT
-  DRB1*01:01:01:01: GDTRPRFLWQ
-  DQA1*01:01:01:01: EDIVADHVAS
-  DQB1*05:01:01:01: RDSPEDFVYQ
-  DPA1*01:03:01:01: IKADHVSTYA
-  DPB1*01:01:01:01: RATPENYVYQ
+  A*01:01: GSHSMRYFFT
+  B*07:02: GSHSMRYFYT
+  C*01:02: CSHSMKYFFT
+  DRB1*01:01: GDTRPRFLWQ
+  DQA1*01:01: EDIVADHVAS
+  DQB1*05:01: RDSPEDFVYQ
+  DPA1*01:03: IKADHVSTYA
+  DPB1*01:01: RATPENYVYQ
 ard_start_pos:
   A: 0
   B: 0
@@ -89,6 +89,15 @@ gapped_tables:
   - DQB1_gapped
   - DPA1_gapped
   - DPB1_gapped
+gapped_mature_tables:
+  - A_gapped_mature
+  - B_gapped_mature
+  - C_gapped_mature
+  - DRB1_gapped_mature
+  - DQA1_gapped_mature
+  - DQB1_gapped_mature
+  - DPA1_gapped_mature
+  - DPB1_gapped_mature
 ungapped_tables:
   - A_ungapped
   - B_ungapped
@@ -98,6 +107,15 @@ ungapped_tables:
   - DQB1_ungapped
   - DPA1_ungapped
   - DPB1_ungapped
+ungapped_mature_tables:
+  - A_ungapped_mature
+  - B_ungapped_mature
+  - C_ungapped_mature
+  - DRB1_ungapped_mature
+  - DQA1_ungapped_mature
+  - DQB1_ungapped_mature
+  - DPA1_ungapped_mature
+  - DPB1_ungapped_mature
 completed_tables:
   - A_completed
   - B_completed
