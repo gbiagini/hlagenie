@@ -1,5 +1,8 @@
 from .configs import config  # for configurations
 
+__author__ = "Giovanni Biagini"
+__version__ = "0.0.1"
+
 
 def init(
     imgt_version: str = "Latest",
