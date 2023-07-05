@@ -6,25 +6,19 @@ Python package for dealing with HLA sequence data
 Heavily inspired by and dependent on the [pyARD](https://www.github.com/nmdp-bioinformatics/py-ard) package. The `HLAGenie` package strives to streamline and standardize the bulk handling of HLA sequence data and provide functions to simplify matching analysis.
 
 ## Table of Contents
-1. [Installation](#installation)
- - [Install from PyPI](#install-from-pypi)
- - [Install from source](#install-from-source)
-2. [Using HLAGenie](#using-hlagenie)
-- [HLAGenie](#hlagenie)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-    - [Install from PyPI](#install-from-pypi)
-    - [Install from source](#install-from-source)
-  - [Using HLAGenie](#using-hlagenie)
-    - [Using `hlagenie` from Python](#using-hlagenie-from-python)
-      - [Initialize `hlagenie`](#initialize-hlagenie)
-      - [Accessing amino acid sequence dictionaries for HLA alleles](#accessing-amino-acid-sequence-dictionaries-for-hla-alleles)
-      - [Retrieve amino acid position from mature protein sequence](#retrieve-amino-acid-position-from-mature-protein-sequence)
-      - [Retrieve amino acid substring from mature protein sequence](#retrieve-amino-acid-substring-from-mature-protein-sequence)
-      - [Retrieve epitope from mature protein sequence](#retrieve-epitope-from-mature-protein-sequence)
-      - [Check if two alleles have a mismatch at a given position](#check-if-two-alleles-have-a-mismatch-at-a-given-position)
-      - [Count the number of amino acid mismatches at a position between donor and recipient](#count-the-number-of-amino-acid-mismatches-at-a-position-between-donor-and-recipient)
-      - [Count the number of amino acid mismatches between donor and recipient at a given position given the alleles](#count-the-number-of-amino-acid-mismatches-between-donor-and-recipient-at-a-given-position-given-the-alleles)
+- [Installation](#installation)
+  - [Install from PyPI](#install-from-pypi)
+  - [Install from source](#install-from-source)
+- [Using HLAGenie](#using-hlagenie)
+  - [Using `hlagenie` from Python](#using-hlagenie-from-python)
+    - [Initialize `hlagenie`](#initialize-hlagenie)
+    - [Accessing amino acid sequence dictionaries for HLA alleles](#accessing-amino-acid-sequence-dictionaries-for-hla-alleles)
+    - [Retrieve amino acid position from mature protein sequence](#retrieve-amino-acid-position-from-mature-protein-sequence)
+    - [Retrieve amino acid substring from mature protein sequence](#retrieve-amino-acid-substring-from-mature-protein-sequence)
+    - [Retrieve epitope from mature protein sequence](#retrieve-epitope-from-mature-protein-sequence)
+    - [Check if two alleles have a mismatch at a given position](#check-if-two-alleles-have-a-mismatch-at-a-given-position)
+    - [Count the number of amino acid mismatches at a position between donor and recipient](#count-the-number-of-amino-acid-mismatches-at-a-position-between-donor-and-recipient)
+    - [Count the number of amino acid mismatches between donor and recipient at a given position given the alleles](#count-the-number-of-amino-acid-mismatches-between-donor-and-recipient-at-a-given-position-given-the-alleles)
 
 ## Installation
 
