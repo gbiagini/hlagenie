@@ -30,7 +30,7 @@ setup(
     zip_safe=False,
     keywords="hlagenie",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
