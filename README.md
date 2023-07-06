@@ -19,6 +19,8 @@ Heavily inspired by and dependent on the [pyARD](https://www.github.com/nmdp-bio
     - [Check if two alleles have a mismatch at a given position](#check-if-two-alleles-have-a-mismatch-at-a-given-position)
     - [Count the number of amino acid mismatches at a position between donor and recipient](#count-the-number-of-amino-acid-mismatches-at-a-position-between-donor-and-recipient)
     - [Count the number of amino acid mismatches between donor and recipient at a given position given the alleles](#count-the-number-of-amino-acid-mismatches-between-donor-and-recipient-at-a-given-position-given-the-alleles)
+    - [Get the antigen recognition domain sequence of an allele](#get-the-antigen-recognition-domain-sequence-of-an-allele)
+    - [Get the extracellular domain sequence of an allele](#get-the-extracellular-domain-sequence-of-an-allele)
 
 ## Installation
 
@@ -127,4 +129,20 @@ The `countAAMismatchesAllele` function takes as input four alleles and an amino 
 
 ```python
 genie.countAAMismatchesAllele("A*02:01","A*02:01","A*01:01","A*01:01", 44) # returns 1
+```
+
+#### Get the antigen recognition domain sequence of an allele
+
+The `getARD` function takes as input an allele name and returns the antigen recognition domain sequence of that allele.
+
+```python
+genie.getARD("A*01:01")
+```
+
+#### Get the extracellular domain sequence of an allele
+
+The `getXRD` function takes as input an allele name and returns the extracellular domain sequence of that allele.
+
+```python
+genie.getXRD("A*01:01")
 ```
