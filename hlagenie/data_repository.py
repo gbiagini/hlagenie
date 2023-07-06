@@ -6,7 +6,7 @@ from .load import load_sequence_alignment
 from hlagenie.configs import config
 from hlagenie.smart_sort import smart_sort_comparator
 from . import db
-from .misc import find_gaps, regex_gen, coordinate
+from .misc import find_gaps, regex_gen, coordinate, coordinate_end
 import pyard  # for HLA nomenclature
 
 
@@ -216,3 +216,159 @@ def generate_ungapped_mature_tables(db_conn: sqlite3.Connection):
         mature_seqs.update(loc_dict)
 
     return mature_seqs
+
+
+def generate_gapped_ard_table(db_conn: sqlite3.Connection, seqs: dict):
+    """
+    Generate a table with the ARD ending position for each locus
+
+    :param db_conn: The database connection object
+    :param seqs: dictionary of sequences to get reference sequence
+    :return: dictionary of ARD ending positions
+    """
+
+    # check if the table exists so as to not rebuild if unnecessary
+    if db.table_exists(db_conn, "gapped_ard"):
+        return db.load_dict(db_conn, "gapped_ard", ("locus", "ard_end"))
+
+    # initialize dictionary to store ard positions
+    ard_ends = {}
+
+    # iterate through loci
+    for locus in config["loci"]:
+        # get the reference allele
+        ref_allele = config["refseq"][locus]
+
+        # get the regex based on the last ten residues of the ARD
+        regex = regex_gen(config["ard_last_ten"][ref_allele])
+
+        # get the reference sequence
+        ref_seq = seqs[ref_allele]
+
+        # get the end coordinates based on reference sequence
+        end_coords = coordinate_end(ref_seq, regex)
+
+        # add to dictionary
+        ard_ends[locus] = end_coords
+
+    # save the dictionary to the database
+    db.save_dict(db_conn, "gapped_ard", ard_ends, ("locus", "ard_end"))
+
+    return ard_ends
+
+
+def generate_gapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
+    """
+    Generate a table with the XRD ending position for each locus
+
+    :param db_conn: The database connection object
+    :param seqs: dictionary of sequences to get reference sequence
+    :return: dictionary of XRD ending positions
+    """
+
+    # check if the table exists so as to not rebuild if unnecessary
+    if db.table_exists(db_conn, "gapped_xrd"):
+        return db.load_dict(db_conn, "gapped_xrd", ("locus", "xrd_end"))
+
+    # initialize dictionary to store ard positions
+    xrd_ends = {}
+
+    # iterate through loci
+    for locus in config["loci"]:
+        # get the reference allele
+        ref_allele = config["refseq"][locus]
+
+        # get the regex based on the last ten residues of the XRD
+        regex = regex_gen(config["xrd_last_ten"][ref_allele])
+
+        # get the reference sequence
+        ref_seq = seqs[ref_allele]
+
+        # get the end coordinates based on reference sequence
+        end_coords = coordinate_end(ref_seq, regex)
+
+        # add to dictionary
+        xrd_ends[locus] = end_coords
+
+    # save the dictionary to the database
+    db.save_dict(db_conn, "gapped_xrd", xrd_ends, ("locus", "xrd_end"))
+
+    return xrd_ends
+
+
+def generate_ungapped_ard_table(db_conn: sqlite3.Connection, seqs: dict):
+    """
+    Generate a table with the ARD ending position for each locus
+
+    :param db_conn: The database connection object
+    :param seqs: dictionary of sequences to get reference sequence
+    :return: dictionary of ARD ending positions
+    """
+
+    # check if the table exists so as to not rebuild if unnecessary
+    if db.table_exists(db_conn, "ungapped_ard"):
+        return db.load_dict(db_conn, "ungapped_ard", ("locus", "ard_end"))
+
+    # initialize dictionary to store ard positions
+    ard_ends = {}
+
+    # iterate through loci
+    for locus in config["loci"]:
+        # get the reference allele
+        ref_allele = config["refseq"][locus]
+
+        # get the regex based on the last ten residues of the ARD
+        regex = regex_gen(config["ard_last_ten"][ref_allele])
+
+        # get the reference sequence
+        ref_seq = seqs[ref_allele]
+
+        # get the end coordinates based on reference sequence
+        end_coords = coordinate_end(ref_seq, regex)
+
+        # add to dictionary
+        ard_ends[locus] = end_coords
+
+    # save the dictionary to the database
+    db.save_dict(db_conn, "ungapped_ard", ard_ends, ("locus", "ard_end"))
+
+    return ard_ends
+
+
+def generate_ungapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
+    """
+    Generate a table with the XRD ending position for each locus
+
+    :param db_conn: The database connection object
+    :param seqs: dictionary of sequences to get reference sequence
+    :return: dictionary of XRD ending positions
+    """
+
+    # check if the table exists so as to not rebuild if unnecessary
+    if db.table_exists(db_conn, "ungapped_xrd"):
+        return db.load_dict(db_conn, "ungapped_xrd", ("locus", "xrd_end"))
+
+    # initialize dictionary to store ard positions
+    xrd_ends = {}
+
+    # iterate through loci
+    for locus in config["loci"]:
+        # get the reference allele
+        ref_allele = config["refseq"][locus]
+
+        # get the regex based on the last ten residues of the XRD
+        regex = regex_gen(config["xrd_last_ten"][ref_allele])
+
+        # get the reference sequence
+        ref_seq = seqs[ref_allele]
+
+        # get the end coordinates based on reference sequence
+        end_coords = coordinate_end(ref_seq, regex)
+
+        # add to dictionary
+        xrd_ends[locus] = end_coords
+
+    # save the dictionary to the database
+    db.save_dict(db_conn, "ungapped_xrd", xrd_ends, ("locus", "xrd_end"))
+
+    return xrd_ends

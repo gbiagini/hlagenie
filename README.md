@@ -79,20 +79,20 @@ genie.full_seqs # full protein sequences
 
 #### Retrieve amino acid position from mature protein sequence
 
-To get a given amino acid position from a given HLA allele, you can use the `getAAposition` function. This function is 1-indexed to match standard IMGT/HLA database nomenclature.
+To get a given amino acid position from a given HLA allele, you can use the `getAA` function. This function is 1-indexed to match standard IMGT/HLA database nomenclature.
 
 For this and following functions, if a three- or four-field allele name is passed, a call is made to `py-ard` to reduce to the two-field level.
 
 ```python
-genie.getAAposition("A*01:01",1) # returns "G"
+genie.getAA("A*01:01",1) # returns "G"
 ```
 
 #### Retrieve amino acid substring from mature protein sequence
 
-To get a given amino acid substring from a given HLA allele, you can use the `getAAsubstring` function. This function is 1-indexed as well and is inclusive of the start and end positions.
+To get a given amino acid substring from a given HLA allele, you can use the `getPeptide` function. This function is 1-indexed as well and is inclusive of the start and end positions.
 
 ```python
-genie.getAAsubstring("A*01:01",1,10) # returns "GSHSMRYFFT"
+genie.getPeptide("A*01:01",1,10) # returns "GSHSMRYFFT"
 ```
 
 #### Retrieve epitope from mature protein sequence

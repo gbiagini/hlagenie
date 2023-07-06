@@ -38,11 +38,15 @@ class GENIE:
                 self.db_connection, imgt_version
             )
             self.seqs = dr.generate_ungapped_mature_tables(self.db_connection)
+            self.ards = dr.generate_ungapped_ard_table(self.db_connection, self.seqs)
+            self.xrds = dr.generate_ungapped_xrd_table(self.db_connection, self.seqs)
         else:
             self.full_seqs = dr.generate_gapped_tables(self.db_connection, imgt_version)
             self.seqs = dr.generated_gapped_mature_tables(self.db_connection)
+            self.ards = dr.generate_gapped_ard_table(self.db_connection, self.seqs)
+            self.xrds = dr.generate_gapped_xrd_table(self.db_connection, self.seqs)
 
-    def getAAposition(self, allele, position):
+    def getAA(self, allele, position):
         """
         Get the amino acid at a specific position in an allele
 
@@ -56,7 +60,7 @@ class GENIE:
         # get the amino acid at the specified position
         return self.seqs[allele][position - 1]
 
-    def getAAsubstring(self, allele, start, stop):
+    def getPeptide(self, allele, start, stop):
         """
         Get the amino acid substring from a specified position to another specified position
 
@@ -102,8 +106,8 @@ class GENIE:
             allele2 = self.ard.redux(allele2, "U2")
 
         # get the amino acid at the specified position for each allele
-        aa1 = self.getAAposition(allele1, position)
-        aa2 = self.getAAposition(allele2, position)
+        aa1 = self.getAA(allele1, position)
+        aa2 = self.getAA(allele2, position)
 
         # check if the amino acids are the same
         return not (aa1 == aa2)
@@ -135,10 +139,10 @@ class GENIE:
             donor_homozygous = True
 
         # get amino acids at specified position
-        aa1_donor = self.getAAposition(allele1donor, position)
-        aa2_donor = self.getAAposition(allele2donor, position)
-        aa1_recip = self.getAAposition(allele1recip, position)
-        aa2_recip = self.getAAposition(allele2recip, position)
+        aa1_donor = self.getAA(allele1donor, position)
+        aa2_donor = self.getAA(allele2donor, position)
+        aa1_recip = self.getAA(allele1recip, position)
+        aa2_recip = self.getAA(allele2recip, position)
 
         # count mismatches between donor and recipient
         mm_count = self.countAAMismatches(aa1_donor, aa2_donor, aa1_recip, aa2_recip)
@@ -168,3 +172,39 @@ class GENIE:
             mm_count += 1
 
         return mm_count
+
+    def getARD(self, allele):
+        """
+        Get the ARD sequence of an allele
+
+        :param allele: The allele to get the ARD sequence from
+        :return: The ARD sequence
+        """
+
+        # reduce to two field if greater than two field
+        if allele.count(":") > 1:
+            allele = self.ard.redux(allele, "U2")
+
+        # get locus
+        locus = allele.split("*")[0]
+
+        # get the ARD sequence
+        return self.seqs[allele][: self.ards[locus]]
+
+    def getXRD(self, allele):
+        """
+        Get the XRD sequence of an allele
+
+        :param allele: The allele to get the XRD sequence from
+        :return: The XRD sequence
+        """
+
+        # reduce to two field if greater than two field
+        if allele.count(":") > 1:
+            allele = self.ard.redux(allele, "U2")
+
+        # get locus
+        locus = allele.split("*")[0]
+
+        # get the ARD sequence
+        return self.seqs[allele][: self.xrds[locus]]

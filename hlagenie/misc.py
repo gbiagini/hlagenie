@@ -101,3 +101,23 @@ def coordinate(sequence: str, regex: str):
     start = match.start()
 
     return start
+
+
+def coordinate_end(sequence: str, regex: str):
+    """
+    Find the end coordinates of either the ARD or XRD based on a regular expression
+
+    :param regex: regex for identifying the end of a domain
+    :param sequence: reference sequence
+    :return: end coordinates of the domain
+    """
+
+    import re  # for regex matching
+
+    # find match
+    match = re.search(regex, sequence)
+
+    # if match is found, return end coordinate
+    end = match.span()[1]
+
+    return end

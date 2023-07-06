@@ -12,20 +12,20 @@ allele2 = "A*01:01"
 position1 = 8
 
 
-# test getAAposition function
-def test_getAAposition():
-    assert aa_mm.getAAposition(allele1, position1) == "F"
-    assert aa_mm.getAAposition(allele2, position1) == "F"
-    assert aa_mm.getAAposition(allele1, 44) == "R"
-    assert aa_mm.getAAposition(allele2, 44) == "K"
-    assert aa_mm.getAAposition(allele1, 45) == "M"
-    assert aa_mm.getAAposition(allele2, 45) == "M"
+# test getAA function
+def test_getAA():
+    assert aa_mm.getAA(allele1, position1) == "F"
+    assert aa_mm.getAA(allele2, position1) == "F"
+    assert aa_mm.getAA(allele1, 44) == "R"
+    assert aa_mm.getAA(allele2, 44) == "K"
+    assert aa_mm.getAA(allele1, 45) == "M"
+    assert aa_mm.getAA(allele2, 45) == "M"
 
 
-# test getAAsubstring function
-def test_getAAsubstring():
+# test getPeptide function
+def test_getPeptide():
     # check first 10 residues
-    assert aa_mm.getAAsubstring(allele1, 1, 10) == "GSHSMRYFFT"
+    assert aa_mm.getPeptide(allele1, 1, 10) == "GSHSMRYFFT"
 
 
 # test getEpitope function
@@ -51,7 +51,21 @@ def test_countAAMismatches():
     assert aa_mm.countAAMismatches("Y", "Y", "Y", "D") == 0
 
 
+# test defining of ARD
+def test_getARD():
+    assert len(aa_mm.getARD("A*01:01")) == 183
+    assert aa_mm.getARD("A*01:01")[0:5] == "GSHSM"
+    assert aa_mm.getARD("A*01:01")[-5:] == "LQRTD"
+
+
+# test defining of XRD
+def test_getXRD():
+    assert len(aa_mm.getXRD("A*01:01")) == 275
+    assert aa_mm.getXRD("A*01:01")[0:5] == "GSHSM"
+    assert aa_mm.getXRD("A*01:01")[-5:] == "TLRWE"
+
+
 # test handling of deleted alleles
 # def test_deleted_alleles():
-#     assert aa_mm.getAAposition("B*38:158", 180) == "Q"
-#     assert aa_mm.getAAposition("B*38:158", 178) == "T"
+#     assert aa_mm.getAA("B*38:158", 180) == "Q"
+#     assert aa_mm.getAA("B*38:158", 178) == "T"

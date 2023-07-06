@@ -39,42 +39,24 @@ first_ten:
   DQB1*05:01: RDSPEDFVYQ
   DPA1*01:03: IKADHVSTYA
   DPB1*01:01: RATPENYVYQ
-ard_start_pos:
-  A: 0
-  B: 0
-  C: 0
-  DRB1: 0
-  DQA1: 0
-  DQB1: 0
-  DPA1: 0
-  DPB1: 0
-ard_end_pos:
-  A: 182
-  B: 182
-  C: 182
-  DRB1: 94
-  DQA1: 87
-  DQB1: 94
-  DPA1: 84
-  DPB1: 92
-xrd_start_pos:
-  A: 0
-  B: 0
-  C: 0
-  DRB1: 0
-  DQA1: 0
-  DQB1: 0
-  DPA1: 0
-  DPB1: 0
-xrd_end_pos:
-  A: 274
-  B: 274
-  C: 274
-  DRB1: 188
-  DQA1: 181
-  DQB1: 188
-  DPA1: 178
-  DPB1: 186
+ard_last_ten:
+  A*01:01: NGKETLQRTD
+  B*07:02: NGKDKLERAD
+  C*01:02: NGKETLQRAE
+  DRB1*01:01: GESFTVQRRV
+  DQA1*01:01: RYNSTAATNE
+  DQB1*05:01: AYRGILQRRV
+  DPA1*01:03: RSNHTQATND
+  DPB1*01:01: DEAVTLQRRV
+xrd_last_ten:
+  A*01:01: LPKPLTLRWE
+  B*07:02: LPKPLTLRWE
+  C*01:02: LPEPLTLRWE
+  DRB1*01:01: VTSPLTVEWR
+  DQA1*01:01: LDQPLLKHWE
+  DQB1*05:01: LQSPITVEWR
+  DPA1*01:03: LDQPLLKHWE
+  DPB1*01:01: LDSPVTVEWK
 expression_chars:
   - N
   - Q
