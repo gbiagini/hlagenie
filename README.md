@@ -21,6 +21,11 @@ Heavily inspired by and dependent on the [pyARD](https://www.github.com/nmdp-bio
     - [Count the number of amino acid mismatches between donor and recipient at a given position given the alleles](#count-the-number-of-amino-acid-mismatches-between-donor-and-recipient-at-a-given-position-given-the-alleles)
     - [Get the antigen recognition domain sequence of an allele](#get-the-antigen-recognition-domain-sequence-of-an-allele)
     - [Get the extracellular domain sequence of an allele](#get-the-extracellular-domain-sequence-of-an-allele)
+  - [Using `hlagenie` from the command line](#using-hlagenie-from-the-command-line)
+    - [Retrieval of specific amino acid positions](#retrieval-of-specific-amino-acid-positions)
+    - [Retrieval of ARD sequence](#retrieval-of-ard-sequence)
+    - [Retrieval of XRD sequence](#retrieval-of-xrd-sequence)
+    - [Retrieval of mature protein sequence](#retrieval-of-mature-protein-sequence)
 
 ## Installation
 
@@ -146,3 +151,48 @@ The `getXRD` function takes as input an allele name and returns the extracellula
 ```python
 genie.getXRD("A*01:01")
 ```
+
+### Using `hlagenie` from the command line
+
+Some command-line functions are now available.
+
+- Retrieval of specific amino acid positions
+- Retrieval of ARD sequence
+- Retrieval of XRD sequence
+- Retrieval of mature protein sequence
+
+Note that the gapped sequences can be retrieved for any of the following by passing the `--gapped` flag.
+
+#### Retrieval of specific amino acid positions
+
+Calling `hlagenie` from the command line with an allele name and space-delimited list of positions will allow you to retrieve the amino acid at those positions.
+
+```bash
+hlagenie -a "A*01:01" -p 1 2 3 4 5 # returns 1G_2S_3H_4S_5M
+```
+
+#### Retrieval of ARD sequence
+
+Calling `hlagenie` from the command line with an allele name and the `--ard` flag will allow you to retrieve the ARD sequence of that allele.
+
+```bash
+hlagenie -a "A*01:01" --ard
+```
+
+#### Retrieval of XRD sequence
+
+Calling `hlagenie` from the command line with an allele name and the `--xrd` flag will allow you to retrieve the XRD sequence of that allele.
+
+```bash
+hlagene -a "A*01:01" --xrd
+```
+
+#### Retrieval of mature protein sequence
+
+Calling `hlagenie` from the command line with only an allele name will allow you to retrieve the mature protein sequence of that allele.
+
+```bash
+
+hlagenie -a "A*01:01"
+```
+
