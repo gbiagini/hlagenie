@@ -42,7 +42,7 @@ class GENIE:
             self.xrds = dr.generate_ungapped_xrd_table(self.db_connection, self.seqs)
         else:
             self.full_seqs = dr.generate_gapped_tables(self.db_connection, imgt_version)
-            self.seqs = dr.generated_gapped_mature_tables(self.db_connection)
+            self.seqs = dr.generate_gapped_mature_tables(self.db_connection)
             self.ards = dr.generate_gapped_ard_table(self.db_connection, self.seqs)
             self.xrds = dr.generate_gapped_xrd_table(self.db_connection, self.seqs)
 

@@ -1,0 +1,73 @@
+import argparse
+import sys
+import pyard
+import hlagenie
+from hlagenie.misc import get_imgt_version
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="HLAGenie: Sequence handing for HLA",
+    )
+    parser.add_argument(
+        "-i",
+        "--imgt-version",
+        dest="imgt_version",
+        help="IPD-IMGT/HLA DB Version number to use for sequence querying",
+    )
+    parser.add_argument(
+        "-a",
+        "--allele",
+        dest="allele",
+        help="HLA allele for sequence querying",
+        required=True,
+    )
+    parser.add_argument(
+        "--ard",
+        dest="ard",
+        action="store_true",
+        help="Pass this flag to return the entire ARD for the specified allele",
+    )
+    parser.add_argument(
+        "--xrd",
+        dest="xrd",
+        action="store_true",
+        help="Pass this flag to return the entire XRD for the specified allele",
+    )
+    parser.add_argument(
+        "--gapped",
+        dest="gapped",
+        action="store_true",
+        help="Pass this flag to use the gapped sequence for the specified allele",
+    )
+    parser.add_argument(
+        "-p",
+        "--positions",
+        nargs="*",
+        dest="positions",
+        help="A space-delimited list of positions to retrieve the amino acids for - leave empty for entire mature protein sequence",
+    )
+
+    args = parser.parse_args()
+
+    imgt_version = get_imgt_version(args.imgt_version)
+
+    ard = pyard.init(imgt_version)
+
+    allele = ard.redux(args.allele, "U2")
+    positions = args.positions
+
+    if args.gapped:
+        genie = hlagenie.init(imgt_version, ungap=False)
+    else:
+        genie = hlagenie.init(imgt_version)
+
+    if args.ard:
+        print(genie.getARD(allele))
+    elif args.xrd:
+        print(genie.getXRD(allele))
+    elif positions:
+        positions = [int(i) for i in positions]
+        print(genie.getEpitope(allele, positions))
+    else:
+        print(genie.seqs[allele])

@@ -24,7 +24,9 @@ setup(
         "hlagenie",
     ],
     provides=["hlagenie"],
-    scripts=[],
+    scripts=[
+        "scripts/hlagenie",
+    ],
     install_requires=requirements,
     license="LGPL 3.0",
     zip_safe=False,

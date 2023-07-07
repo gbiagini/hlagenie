@@ -229,7 +229,10 @@ def generate_gapped_ard_table(db_conn: sqlite3.Connection, seqs: dict):
 
     # check if the table exists so as to not rebuild if unnecessary
     if db.table_exists(db_conn, "gapped_ard"):
-        return db.load_dict(db_conn, "gapped_ard", ("locus", "ard_end"))
+        ard_ends = db.load_dict(db_conn, "gapped_ard", ("locus", "ard_end"))
+        # convert the values to integers
+        ard_ends = dict(map(lambda x: (x[0], int(x[1])), ard_ends.items()))
+        return ard_ends
 
     # initialize dictionary to store ard positions
     ard_ends = {}
@@ -249,7 +252,7 @@ def generate_gapped_ard_table(db_conn: sqlite3.Connection, seqs: dict):
         end_coords = coordinate_end(ref_seq, regex)
 
         # add to dictionary
-        ard_ends[locus] = end_coords
+        ard_ends[locus] = int(end_coords)
 
     # save the dictionary to the database
     db.save_dict(db_conn, "gapped_ard", ard_ends, ("locus", "ard_end"))
@@ -268,7 +271,10 @@ def generate_gapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
 
     # check if the table exists so as to not rebuild if unnecessary
     if db.table_exists(db_conn, "gapped_xrd"):
-        return db.load_dict(db_conn, "gapped_xrd", ("locus", "xrd_end"))
+        xrd_ends = db.load_dict(db_conn, "gapped_xrd", ("locus", "xrd_end"))
+        # convert the values to integers
+        xrd_ends = dict(map(lambda x: (x[0], int(x[1])), xrd_ends.items()))
+        return xrd_ends
 
     # initialize dictionary to store ard positions
     xrd_ends = {}
@@ -288,7 +294,7 @@ def generate_gapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
         end_coords = coordinate_end(ref_seq, regex)
 
         # add to dictionary
-        xrd_ends[locus] = end_coords
+        xrd_ends[locus] = int(end_coords)
 
     # save the dictionary to the database
     db.save_dict(db_conn, "gapped_xrd", xrd_ends, ("locus", "xrd_end"))
@@ -307,7 +313,10 @@ def generate_ungapped_ard_table(db_conn: sqlite3.Connection, seqs: dict):
 
     # check if the table exists so as to not rebuild if unnecessary
     if db.table_exists(db_conn, "ungapped_ard"):
-        return db.load_dict(db_conn, "ungapped_ard", ("locus", "ard_end"))
+        ard_ends = db.load_dict(db_conn, "ungapped_ard", ("locus", "ard_end"))
+        # convert the values to integers
+        ard_ends = dict(map(lambda x: (x[0], int(x[1])), ard_ends.items()))
+        return ard_ends
 
     # initialize dictionary to store ard positions
     ard_ends = {}
@@ -327,7 +336,7 @@ def generate_ungapped_ard_table(db_conn: sqlite3.Connection, seqs: dict):
         end_coords = coordinate_end(ref_seq, regex)
 
         # add to dictionary
-        ard_ends[locus] = end_coords
+        ard_ends[locus] = int(end_coords)
 
     # save the dictionary to the database
     db.save_dict(db_conn, "ungapped_ard", ard_ends, ("locus", "ard_end"))
@@ -346,7 +355,10 @@ def generate_ungapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
 
     # check if the table exists so as to not rebuild if unnecessary
     if db.table_exists(db_conn, "ungapped_xrd"):
-        return db.load_dict(db_conn, "ungapped_xrd", ("locus", "xrd_end"))
+        xrd_ends = db.load_dict(db_conn, "ungapped_xrd", ("locus", "xrd_end"))
+        # convert the values to integers
+        xrd_ends = dict(map(lambda x: (x[0], int(x[1])), xrd_ends.items()))
+        return xrd_ends
 
     # initialize dictionary to store ard positions
     xrd_ends = {}
@@ -366,7 +378,7 @@ def generate_ungapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
         end_coords = coordinate_end(ref_seq, regex)
 
         # add to dictionary
-        xrd_ends[locus] = end_coords
+        xrd_ends[locus] = int(end_coords)
 
     # save the dictionary to the database
     db.save_dict(db_conn, "ungapped_xrd", xrd_ends, ("locus", "xrd_end"))
