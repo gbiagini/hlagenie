@@ -218,6 +218,13 @@ Calling `hlagenie-match` from the command line with two allele names and no spec
 hlagenie-match --allele1 "A*01:01" --allele2 "A*01:02" # returns 2
 ```
 
+Alternatively, you can use the `--ard` or `--xrd` flags to check for mismatches in the ARD or XRD sequences, respectively.
+
+```bash
+hlagenie-match --allele1 "A*01:01" --allele2 "A*68:02" --ard # returns 23
+hlagenie-match --allele1 "A*01:01" --allele2 "A*68:02" --ard # returns 29
+```
+
 #### Counting mismatches between donor and recipient given two sets of alleles
 
 Calling `hlagenie-match` from the command line with a recipient haplotype and a donor haplotype and a set of positions will allow you to retrieve the number of mismatches between the donor and recipient at those positions. This is based on the mature protein sequence of the alleles. This uses the gapped sequences by default to best assess matching. This value is adjusted for donor homozygosity.
@@ -236,4 +243,11 @@ Supplying no positions gets the total number of mismatches between the donor and
 
 ```bash
 hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" # returns 32
+```
+
+Alternatively, you can use the `--ard` or `--xrd` flags to get the mismatches between the donor and recipient at the ARD or XRD level, respectively.
+
+```bash
+hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" --ard # returns 24
+hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" --xrd # returns 29
 ```

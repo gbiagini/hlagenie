@@ -42,6 +42,18 @@ if __name__ == "__main__":
         dest="positions",
         help="A space-delimited list of positions to retrieve the amino acids for - leave empty for entire mature protein sequence",
     )
+    parser.add_argument(
+        "--ard",
+        action="store_true",
+        dest="ard",
+        help="Pass this flag to check for mismatches in the ARD",
+    )
+    parser.add_argument(
+        "--xrd",
+        action="store_true",
+        dest="xrd",
+        help="Pass this flag to check for mismatches in the XRD",
+    )
 
     args = parser.parse_args()
 
@@ -81,7 +93,17 @@ if __name__ == "__main__":
             else:
                 # count total number of mismatches between alleles
                 count = 0
-                length = len(genie.seqs[allele1])
+
+                # check if ARD or XRD flags were passed
+                if args.ard:
+                    locus = allele1.split("*")[0]
+                    length = genie.ards[locus]
+                elif args.xrd:
+                    locus = allele1.split("*")[0]
+                    length = genie.xrds[locus]
+                else:
+                    length = len(genie.seqs[allele1])
+
                 for i in range(length):
                     count += int(genie.isPositionMismatched(allele1, allele2, i + 1))
                 print(f"Mismatches: {count}")
@@ -124,7 +146,15 @@ if __name__ == "__main__":
             else:
                 count = 0
 
-                length = len(genie.seqs[r_allele1])
+                # check if ARD or XRD flags were passed
+                if args.ard:
+                    locus = r_allele1.split("*")[0]
+                    length = genie.ards[locus]
+                elif args.xrd:
+                    locus = r_allele1.split("*")[0]
+                    length = genie.xrds[locus]
+                else:
+                    length = len(genie.seqs[r_allele1])
 
                 for i in range(length):
                     count += int(
