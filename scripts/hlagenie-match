@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+import argparse
+import sys
+import pyard
+import hlagenie
+from hlagenie.misc import get_imgt_version
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="HLAGenie Match: Simple mismatch querying for HLA alleles"
+    )
+    parser.add_argument(
+        "-i",
+        "--imgt-version",
+        dest="imgt_version",
+        help="IPD-IMGT/HLA DB Version number to use for sequence querying",
+    )
+    parser.add_argument(
+        "--allele1",
+        dest="allele1",
+        help="First allele to compare",
+    )
+    parser.add_argument(
+        "--allele2",
+        dest="allele2",
+        help="Second allele to compare",
+    )
+    parser.add_argument(
+        "--recip-haplo",
+        dest="recip_haplo",
+        help="Recipient haplotype to compare",
+    )
+    parser.add_argument(
+        "--donor-haplo",
+        dest="donor_haplo",
+        help="Donor haplotype to compare",
+    )
+    parser.add_argument(
+        "-p",
+        "--positions",
+        nargs="*",
+        dest="positions",
+        help="A space-delimited list of positions to retrieve the amino acids for - leave empty for entire mature protein sequence",
+    )
+
+    args = parser.parse_args()
+
+    imgt_version = get_imgt_version(args.imgt_version)
+
+    ard = pyard.init(imgt_version)
+    genie = hlagenie.init(imgt_version, ungap=False)
+
+    # check to see if allele1 was entered
+    if args.allele1:
+        # make sure allele2 was entered also
+        if args.allele2:
+            # redux alleles
+            allele1 = ard.redux(args.allele1, "U2")
+            allele2 = ard.redux(args.allele2, "U2")
+
+            if allele1.split("*")[0] != allele2.split("*")[0]:
+                print("Alleles are not of the same locus")
+                sys.exit(1)
+
+            # check if specific positions were entered
+            if args.positions:
+                positions = args.positions
+                # check if there is only one position entered
+                if len(positions) == 1:
+                    if genie.isPositionMismatched(allele1, allele2, int(positions[0])):
+                        print("Mismatched")
+                    else:
+                        print("Matched")
+                else:
+                    count = 0
+                    for position in positions:
+                        count += int(
+                            genie.isPositionMismatched(allele1, allele2, int(position))
+                        )
+                    print(f"Mismatches at positions {' '.join(positions)}: {count}")
+            else:
+                # count total number of mismatches between alleles
+                count = 0
+                length = len(genie.seqs[allele1])
+                for i in range(length):
+                    count += int(genie.isPositionMismatched(allele1, allele2, i + 1))
+                print(f"Mismatches: {count}")
+        else:
+            print("Please enter two alleles to compare")
+
+    # check to see if haplotypes were entered
+    if args.recip_haplo:
+        # make sure donor haplotype was entered also
+        if args.donor_haplo:
+            # split haplo strings
+            r_allele1, r_allele2 = args.recip_haplo.split("+")
+            r_allele1 = ard.redux(r_allele1, "U2")
+            r_allele2 = ard.redux(r_allele2, "U2")
+            d_allele1, d_allele2 = args.donor_haplo.split("+")
+            d_allele1 = ard.redux(d_allele1, "U2")
+            d_allele2 = ard.redux(d_allele2, "U2")
+
+            if (
+                r_allele1.split("*")[0] != r_allele2.split("*")[0]
+                or d_allele1.split("*")[0] != d_allele2.split("*")[0]
+                or r_allele1.split("*")[0] != d_allele1.split("*")[0]
+            ):
+                print("Alleles are not of the same locus")
+                sys.exit(1)
+
+            # check if specific positions were entered
+            if args.positions:
+                positions = args.positions
+
+                count = 0
+
+                for position in positions:
+                    count += int(
+                        genie.countAAMismatchesAllele(
+                            d_allele1, d_allele2, r_allele1, r_allele2, int(position)
+                        )
+                    )
+                print(f"Mismatches at positions {' '.join(positions)}: {count}")
+            else:
+                count = 0
+
+                length = len(genie.seqs[r_allele1])
+
+                for i in range(length):
+                    count += int(
+                        genie.countAAMismatchesAllele(
+                            d_allele1, d_allele2, r_allele1, r_allele2, i + 1
+                        )
+                    )
+                print(f"Mismatches: {count}")
+        else:
+            print("Please enter both donor and recipient haplotype to compare")

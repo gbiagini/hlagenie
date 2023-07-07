@@ -26,6 +26,7 @@ setup(
     provides=["hlagenie"],
     scripts=[
         "scripts/hlagenie",
+        "scripts/hlagenie-match",
     ],
     install_requires=requirements,
     license="LGPL 3.0",
