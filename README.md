@@ -26,6 +26,8 @@ Heavily inspired by and dependent on the [pyARD](https://www.github.com/nmdp-bio
     - [Retrieval of ARD sequence](#retrieval-of-ard-sequence)
     - [Retrieval of XRD sequence](#retrieval-of-xrd-sequence)
     - [Retrieval of mature protein sequence](#retrieval-of-mature-protein-sequence)
+    - [Checking if positions are mismatched between two alleles](#checking-if-positions-are-mismatched-between-two-alleles)
+    - [Counting mismatches between donor and recipient given two sets of alleles](#counting-mismatches-between-donor-and-recipient-given-two-sets-of-alleles)
 
 ## Installation
 
@@ -196,3 +198,42 @@ Calling `hlagenie` from the command line with only an allele name will allow you
 hlagenie -a "A*01:01"
 ```
 
+#### Checking if positions are mismatched between two alleles
+
+Calling `hlagenie-match` from the command line with two allele names and a position will allow you to check if the two alleles have a mismatch at that position. This is based on the mature protein sequence of the alleles. This uses the gapped sequences by default to best assess matching.
+
+```bash
+hlagenie-match --allele1 "A*01:01" --allele2 "A*01:02" --positions 1 # returns Matched
+```
+
+Supplying a space-delimited list of positions will provide a count of mismatches between the alleles.
+
+```bash
+hlagenie-match --allele1 "A*01:01" --allele2 "A*01:02" --positions 1 2 3 4 5 # returns 0
+```
+
+Calling `hlagenie-match` from the command line with two allele names and no specified positions will allow you to count the total number of mismatches between the two alleles.
+
+```bash
+hlagenie-match --allele1 "A*01:01" --allele2 "A*01:02" # returns 2
+```
+
+#### Counting mismatches between donor and recipient given two sets of alleles
+
+Calling `hlagenie-match` from the command line with a recipient haplotype and a donor haplotype and a set of positions will allow you to retrieve the number of mismatches between the donor and recipient at those positions. This is based on the mature protein sequence of the alleles. This uses the gapped sequences by default to best assess matching. This value is adjusted for donor homozygosity.
+
+```bash
+hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" --positions 1 2 3 4 5 # returns 0
+```
+
+This can also be done with a single position.
+
+```bash
+hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" --positions 1 # returns 0
+```
+
+Supplying no positions gets the total number of mismatches between the donor and recipient, adjusted for donor homozygosity.
+
+```bash
+hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" # returns 32
+```
