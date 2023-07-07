@@ -3,7 +3,7 @@ Python package for dealing with HLA sequence data
 
 ![hlagenie_logo.png](images/hlagenie_logo.png)
 
-Heavily inspired by and dependent on the [pyARD](https://www.github.com/nmdp-bioinformatics/py-ard) package. The `HLAGenie` package strives to streamline and standardize the bulk handling of HLA sequence data and provide functions to simplify matching analysis.
+Heavily inspired by and dependent on the fantastic [pyARD](https://www.github.com/nmdp-bioinformatics/py-ard) package. The `HLAGenie` package strives to streamline and standardize the bulk handling of HLA sequence data and provide functions to simplify matching analysis.
 
 ## Table of Contents
 - [Installation](#installation)
@@ -28,6 +28,8 @@ Heavily inspired by and dependent on the [pyARD](https://www.github.com/nmdp-bio
     - [Retrieval of mature protein sequence](#retrieval-of-mature-protein-sequence)
     - [Checking if positions are mismatched between two alleles](#checking-if-positions-are-mismatched-between-two-alleles)
     - [Counting mismatches between donor and recipient given two sets of alleles](#counting-mismatches-between-donor-and-recipient-given-two-sets-of-alleles)
+- [Feature requests](#feature-requests)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -251,3 +253,13 @@ Alternatively, you can use the `--ard` or `--xrd` flags to get the mismatches be
 hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" --ard # returns 24
 hlagenie-match --recip-haplo "A*01:01+A*01:02" --donor-haplo "A*02:01+A*01:02" --xrd # returns 29
 ```
+
+## Feature requests
+
+If you have a feature request, please feel free to open a new discussion in the [Ideas](https://github.com/gbiagini/hlagenie/discussions/categories/ideas) page of the Discussions tab. Doing so allows for a more open discussion of the feature and allows others to chime in with their thoughts.
+
+## Contributing
+
+Contributions are welcome. Please feel free to open a pull request with your changes. If you are unsure of how to do this, please feel free to open a discussion in the [Q&A](https://github.com/gbiagini/hlagenie/discussions/categories/q-a). If you are interested in contributing but are unsure of where to start, please check out the [Issues](https://github.com/gbiagini/hlagenie/issues) tab.
+
+Bug reporting is also welcome in the [Issues](https://github.com/gbiagini/hlagenie/issues) tab. Please include as much information as possible, including the version of `hlagenie` you are using, the version of Python you are using, and the operating system you are using. If you are able to provide a minimal reproducible example, that would be very helpful.
