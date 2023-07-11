@@ -170,6 +170,135 @@ def generate_ungapped_tables(db_conn: sqlite3.Connection, imgt_version):
     return ungapped_seqs
 
 
+def generate_completed_table(db_conn: sqlite3.Connection, locus: str, seqs: dict):
+    """
+    Create table with list of allele with completed sequences
+
+    :param db_conn: SQLite3 database connection object to HLAGenie database
+    :type db_conn: sqlite3.Connection
+    :param locus: HLA locus to generate completed table for
+    :type locus: str
+    :param seqs: dictionary of sequences
+    :type seqs: dict
+    :return: list of alleles with completed sequences
+    """
+
+    if db.table_exists(db_conn, f"{locus}_completed"):
+        return db.load_set(db_conn, f"{locus}_completed", ("allele"))
+
+    # get the reference sequence
+    ref_allele = config["refseq"][locus]
+
+    # get the reference sequence
+    ref_seq = seqs[ref_allele]
+
+    # get the gaps in the reference sequence
+    gaps = set(find_gaps(ref_seq))
+
+    # get the sequences for the locus
+    loc_seqs = {
+        allele: seq for allele, seq in seqs.items() if allele.split("*")[0] == locus
+    }
+
+    # initialize list to store completed alleles
+    completed = [
+        allele for allele, seq in loc_seqs.items() if set(find_gaps(seq)) == gaps
+    ]
+
+    # remove null alleles
+    completed = [allele for allele in completed if not allele[-1].isalpha()]
+
+    # save the list to the database
+    db.save_set(db_conn, f"{locus}_completed", set(completed), ("allele"))
+
+    return completed
+
+
+def generate_incomplete_table(db_conn: sqlite3.Connection, locus: str, seqs: dict):
+    """
+    Create table with list of allele with incomplete sequences
+
+    :param db_conn: SQLite3 database connection object to HLAGenie database
+    :type db_conn: sqlite3.Connection
+    :param locus: HLA locus to generate incomplete table for
+    :type locus: str
+    :param seqs: dictionary of sequences
+    :type seqs: dict
+    :return: list of alleles with incomplete sequences
+    """
+
+    if db.table_exists(db_conn, f"{locus}_incomplete"):
+        return db.load_set(db_conn, f"{locus}_incomplete", ("allele"))
+
+    # get the reference sequence
+    ref_allele = config["refseq"][locus]
+
+    # get the reference sequence
+    ref_seq = seqs[ref_allele]
+
+    # get the gaps in the reference sequence
+    gaps = len(find_gaps(ref_seq))
+
+    # limit to alleles in locus
+    loc_seqs = {
+        allele: seq for allele, seq in seqs.items() if allele.split("*")[0] == locus
+    }
+
+    # initialize list to store incomplete alleles
+    incomplete = [
+        allele for allele, seq in loc_seqs.items() if len(find_gaps(seq)) > gaps
+    ]
+
+    # remove null alleles
+    incomplete = [allele for allele in incomplete if not allele[-1].isalpha()]
+
+    # save the list to the database
+    db.save_set(db_conn, f"{locus}_incomplete", set(incomplete), ("allele"))
+
+    return incomplete
+
+
+def generate_extended_table(db_conn: sqlite3.Connection, locus: str, seqs: dict):
+    """
+    Create table with list of allele with extended sequences
+
+    :param db_conn: SQLite3 database connection object to HLAGenie database
+    :type db_conn: sqlite3.Connection
+    :param locus: HLA locus to generate extended table for
+    :type locus: str
+    :param seqs: dictionary of sequences
+    :type seqs: dict
+    :return: list of alleles with extended sequences
+    """
+
+    if db.table_exists(db_conn, f"{locus}_extended"):
+        return db.load_set(db_conn, f"{locus}_extended", ("allele"))
+
+    # get the reference sequence
+    ref_allele = config["refseq"][locus]
+
+    # get the reference sequence
+    ref_seq = seqs[ref_allele]
+
+    # get the gaps in the reference sequence
+    gaps = len(find_gaps(ref_seq))
+
+    # limit to alleles in locus
+    loc_seqs = {
+        allele: seq for allele, seq in seqs.items() if allele.split("*")[0] == locus
+    }
+
+    # initialize list to store extended alleles
+    extended = [
+        allele for allele, seq in loc_seqs.items() if len(find_gaps(seq)) < gaps
+    ]
+
+    # save the list to the database
+    db.save_set(db_conn, f"{locus}_extended", set(extended), ("allele"))
+
+    return extended
+
+
 def generate_ungapped_mature_tables(db_conn: sqlite3.Connection):
     """
     Create tables with ungapped mature sequences for every allele in the IMGT/HLA database for each locus

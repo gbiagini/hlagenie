@@ -208,3 +208,33 @@ class GENIE:
 
         # get the ARD sequence
         return self.seqs[allele][: self.xrds[locus]]
+
+    def listIncompletes(self, locus):
+        """
+        List the incomplete alleles in the database
+
+        :param locus: The locus to list the incomplete alleles from
+        :return: A list of incomplete alleles
+        """
+
+        return dr.generate_incomplete_table(self.db_connection, locus, self.seqs)
+
+    def listCompletes(self, locus):
+        """
+        List the complete alleles in the database
+
+        :param locus: The locus to list the complete alleles from
+        :return: A list of complete alleles
+        """
+
+        return dr.generate_completed_table(self.db_connection, locus, self.seqs)
+
+    def listExtendeds(self, locus):
+        """
+        List the extended alleles in the database
+
+        :param locus: The locus to list the extended alleles from
+        :return: A list of extended alleles
+        """
+
+        return dr.generate_extended_table(self.db_connection, locus, self.seqs)
