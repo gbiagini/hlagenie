@@ -2,7 +2,7 @@ import copy
 import functools
 import sqlite3
 import hlagenie.load
-from .load import load_sequence_alignment
+from .load import load_sequence_alignment, load_nucleotide_alignment
 from hlagenie.configs import config
 from hlagenie.smart_sort import smart_sort_comparator
 from . import db
@@ -513,3 +513,113 @@ def generate_ungapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
     db.save_dict(db_conn, "ungapped_xrd", xrd_ends, ("locus", "xrd_end"))
 
     return xrd_ends
+
+
+def generate_ungapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version):
+    """Generate a table with ungapped nucleotide sequences for every locus
+
+    :param db_conn: The database connection object
+    :type db_conn: sqlite3.Connection
+    :return: dictionary of ungapped nucleotide sequences
+    """
+    # check if the tables exist so as to not rebuild if unnecessary
+    if db.tables_exist(db_conn, config["ungapped_nuc_tables"]):
+        return db.load_ungapped_nuc_tables(db_conn)
+
+    # initialize pyard object
+    ard = pyard.init(imgt_version)
+
+    # initialize the dictionary to store all sequences
+    ungapped_seqs = {}
+
+    # retrieve multiple sequence alignment for each locus
+    for locus in config["loci"]:
+        # load the nucleotide sequence alignment
+        multi_seq = load_nucleotide_alignment(imgt_version, locus)
+
+        # get the reference sequence
+        ref_allele = config["refseq"][locus]
+        for record in multi_seq:
+            if ard.redux(record.id, "U2") == ref_allele:
+                ref_seq = str(record.seq)
+                break
+
+        # get the gaps in the reference sequence
+        gaps = find_gaps(ref_seq)
+
+        # turn the sequence alignment into a dictionary
+
+        ## initialize a per-locus dictionary
+        loc_seqs = {}
+
+        ## iterate through the sequence alignment
+        for record in multi_seq:
+            ### use py-ard to get two-field allele
+            allele = ard.redux(record.id, "U2")
+
+            ### only add allele if not already present to avoid overwriting with less complete sequence
+            if allele not in loc_seqs.keys():
+                #### remove gaps from the sequence (if actually a gap)
+                sequence = "".join(
+                    [
+                        char
+                        for i, char in enumerate(str(record.seq))
+                        if ((i not in gaps) or (char != "-"))
+                    ]
+                )
+
+                loc_seqs[allele] = sequence
+
+        # save the sequence alignment to the database
+        db.save_dict(db_conn, f"{locus}_ungapped_nuc", loc_seqs, ("allele", "seq"))
+
+        # update overall dictionary
+        ungapped_seqs.update(loc_seqs)
+
+    return ungapped_seqs
+
+
+def generate_gapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version):
+    """
+    Create tables with gapped nucleotide sequences for every allele in the IMGT/HLA database for each locus
+
+    :param db_conn: The database connection object
+    :return: dictionary of gapped sequences
+    """
+
+    # check if the tables exist so as to not rebuild if unnecessary
+    if db.tables_exist(db_conn, config["gapped_nuc_tables"]):
+        return db.load_gapped_nuc_tables(db_conn)
+
+    # initialize pyard object
+    ard = pyard.init(imgt_version)
+
+    # initialize the dictionary to store all sequences
+    gapped_seqs = {}
+
+    # retrieve multiple sequence alignment for each locus
+    for locus in config["loci"]:
+        # load the sequence alignment
+        multi_seq = load_nucleotide_alignment(imgt_version, locus)
+
+        # turn the sequence alignment into a dictionary
+
+        ## initialize a per-locus dictionary
+        loc_seqs = {}
+
+        ## iterate through the sequence alignment
+        for record in multi_seq:
+            ### use py-ard to get two-field allele
+            allele = ard.redux(record.id, "U2")
+
+            ### only add allele if not already present to avoid overwriting with less complete sequence
+            if allele not in loc_seqs.keys():
+                loc_seqs[allele] = str(record.seq)
+
+        # save the sequence alignment to the database
+        db.save_dict(db_conn, f"{locus}_gapped_nuc", loc_seqs, ("allele", "seq"))
+
+        # update overall dictionary
+        gapped_seqs.update(loc_seqs)
+
+    return gapped_seqs

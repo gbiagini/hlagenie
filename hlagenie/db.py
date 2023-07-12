@@ -232,6 +232,7 @@ def set_user_version(connection: sqlite3.Connection, version: int):
     cursor.close()
 
 
+# TODO: combine load_gapped_tables and load_gapped_nuc_tables
 def load_gapped_tables(connection: sqlite3.Connection):
     """
     Return a dictionary of gapped sequence tables
@@ -247,6 +248,28 @@ def load_gapped_tables(connection: sqlite3.Connection):
         # extend the dictionary with each locus
         gapped_seqs.update(
             load_dict(connection, table_name=f"{loc}_gapped", columns=("allele", "seq"))
+        )
+
+    return gapped_seqs
+
+
+def load_gapped_nuc_tables(connection: sqlite3.Connection):
+    """
+    Return a dictionary of gapped nucleotide tables
+
+    :param connection: db connection of type sqlite.Connection
+    :return: dict of gapped sequence tables
+    """
+
+    # initialize dictionary to store allele:seq key:value pairs
+    gapped_seqs = {}
+
+    for loc in config["loci"]:
+        # extend the dictionary with each locus
+        gapped_seqs.update(
+            load_dict(
+                connection, table_name=f"{loc}_gapped_nuc", columns=("allele", "seq")
+            )
         )
 
     return gapped_seqs
@@ -274,6 +297,7 @@ def load_gapped_mature_tables(connection: sqlite3.Connection):
     return gapped_seqs
 
 
+# TODO: combine load_ungapped_tables and load_ungapped_nuc_tables
 def load_ungapped_tables(connection: sqlite3.Connection):
     """
     Return a dictionary of ungapped sequence tables
@@ -290,6 +314,28 @@ def load_ungapped_tables(connection: sqlite3.Connection):
         ungapped_seqs.update(
             load_dict(
                 connection, table_name=f"{loc}_ungapped", columns=("allele", "seq")
+            )
+        )
+
+    return ungapped_seqs
+
+
+def load_ungapped_nuc_tables(connection: sqlite3.Connection):
+    """
+    Return a dictionary of ungapped nucleotide tables
+
+    :param connection: db connection of type sqlite.Connection
+    :return: dict of ungapped sequence tables
+    """
+
+    # initialize dictionary to store allele:seq key:value pairs
+    ungapped_seqs = {}
+
+    for loc in config["loci"]:
+        # extend the dictionary with each locus
+        ungapped_seqs.update(
+            load_dict(
+                connection, table_name=f"{loc}_ungapped_nuc", columns=("allele", "seq")
             )
         )
 

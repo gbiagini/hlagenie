@@ -60,8 +60,10 @@ config["expression_chars"] = [
     "L",
     "S",
 ]
+# TODO: rename gapped_tables to gapped_tables_prot
 config["gapped_tables"] = [f"{locus}_gapped" for locus in config["loci"]]
 config["gapped_mature_tables"] = [f"{locus}_gapped_mature" for locus in config["loci"]]
+# TODO: rename ungapped_tables to ungapped_tables_prot
 config["ungapped_tables"] = [f"{locus}_ungapped" for locus in config["loci"]]
 config["ungapped_mature_tables"] = [
     f"{locus}_ungapped_mature" for locus in config["loci"]
@@ -69,4 +71,6 @@ config["ungapped_mature_tables"] = [
 config["completed_tables"] = [f"{locus}_completed" for locus in config["loci"]]
 config["incomplete_tables"] = [f"{locus}_incomplete" for locus in config["loci"]]
 config["extended_tables"] = [f"{locus}_extended" for locus in config["loci"]]
+config["ungapped_nuc_tables"] = [f"{locus}_ungapped_nuc" for locus in config["loci"]]
+config["gapped_nuc_tables"] = [f"{locus}_gapped_nuc" for locus in config["loci"]]
 config["position_tables"] = [f"{locus}_position" for locus in config["loci"]]
