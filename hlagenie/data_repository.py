@@ -2,7 +2,10 @@ import copy
 import functools
 import sqlite3
 import hlagenie.load
-from .load import load_sequence_alignment, load_nucleotide_alignment
+from .load import (
+    load_sequence_alignment,
+    load_nucleotide_alignment,
+)
 from hlagenie.configs import config
 from hlagenie.smart_sort import smart_sort_comparator
 from . import db
@@ -644,3 +647,21 @@ def generate_gapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version):
         gapped_seqs.update(loc_seqs)
 
     return gapped_seqs
+
+
+def set_db_version(db_connection: sqlite3.Connection, imgt_version):
+    """
+    Set the IMGT database version number as a user_version string in
+    the database itself.
+
+    :param db_connection: Active SQLite Connection
+    :param imgt_version: current imgt_version
+    """
+    # If version already exists, don't reset
+    version = db.get_user_version(db_connection)
+    if version:
+        return version
+
+    db.set_user_version(db_connection, int(version))
+    print("Version:", version)
+    return version

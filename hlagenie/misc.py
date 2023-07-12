@@ -2,6 +2,7 @@
 
 import pathlib  # for path manipulation
 import tempfile  # for temporary directory access
+from .load import load_latest_version  # to get latest IMGTHLA database version
 
 
 # manipulate input of imgt_version
@@ -11,7 +12,7 @@ def get_imgt_version(imgt_version):
         if version.isdigit():
             return version
     # if no version specified, use latest
-    return "Latest"
+    return load_latest_version()
 
 
 # define directory to store IMGT database

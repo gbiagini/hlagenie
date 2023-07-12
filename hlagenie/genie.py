@@ -7,6 +7,7 @@ from pathlib import Path  # for path manipulation
 import pyard  # for HLA nomenclature
 from . import db  # for database operations
 from . import data_repository as dr  # for data repository operations
+from .load import load_latest_version # get most updated version of IMGT database
 from .configs import config  # for configurations
 
 
@@ -26,12 +27,19 @@ class GENIE:
         # set values for needed variables
         self._data_dir = data_dir
         self.ungap = ungap
-
+        
+        # if database version is "Latest", get the latest version
+        if imgt_version == "Latest":
+            imgt_version = load_latest_version()
+        
         # add an ard object
         self.ard = pyard.init(imgt_version)
 
         # create database connection to SQLite database
         self.db_connection = db.create_db_connection(data_dir, imgt_version)
+
+        # save the IMGT version
+        dr.set_db_version(self.db_connection, imgt_version)
 
         # load sequence data from database
         if self.ungap:
@@ -52,6 +60,14 @@ class GENIE:
             self.seqs = dr.generate_gapped_mature_tables(self.db_connection)
             self.ards = dr.generate_gapped_ard_table(self.db_connection, self.seqs)
             self.xrds = dr.generate_gapped_xrd_table(self.db_connection, self.seqs)
+
+    def __del__(self):
+        """Close the db connection, when ARD instance goes away
+
+        :return:
+        """
+        if hasattr(self, "db_connection") and self.db_connection:
+            self.db_connection.close()
 
     def getAA(self, allele: str, position: int):
         """
