@@ -12,8 +12,8 @@ Heavily inspired by and dependent on the fantastic [pyARD](https://www.github.co
 - [Using HLAGenie](#using-hlagenie)
   - [Using `hlagenie` from Python](#using-hlagenie-from-python)
     - [Initialize `hlagenie`](#initialize-hlagenie)
-    - [Accessing amino acid sequence dictionaries for HLA alleles](#accessing-amino-acid-sequence-dictionaries-for-hla-alleles)
-    - [Retrieve amino acid position from mature protein sequence](#retrieve-amino-acid-position-from-mature-protein-sequence)
+    - [Accessing sequence dictionaries for HLA alleles](#accessing-sequence-dictionaries-for-hla-alleles)
+    - [Retrieve amino acid or nucleotide position from mature protein sequence](#retrieve-amino-acid-or-nucleotide-position-from-mature-protein-sequence)
     - [Retrieve amino acid substring from mature protein sequence](#retrieve-amino-acid-substring-from-mature-protein-sequence)
     - [Retrieve epitope from mature protein sequence](#retrieve-epitope-from-mature-protein-sequence)
     - [Check if two alleles have a mismatch at a given position](#check-if-two-alleles-have-a-mismatch-at-a-given-position)
@@ -77,25 +77,27 @@ genie = hlagenie.init("3510", ungap = False)
 
 The first time an object is instantiated with a given IMGT/HLA database version, the package will download the appropriate MSF files from the IMGT/HLA GitHub repository and create a SQLite database in the `/tmp` folder.
 
-#### Accessing amino acid sequence dictionaries for HLA alleles
+#### Accessing sequence dictionaries for HLA alleles
 
-The `GENIE` object contains dictionaries of amino acid sequences for each HLA allele. The keys for the dictionaries are the HLA allele names. The values are the amino acid sequences for the full or mature protein sequence dictionary.
+The `GENIE` object contains dictionaries of amino acid and nucleotide sequences for each HLA allele. The keys for the dictionaries are the HLA allele names. The values are the genetic sequences.
 
 All of the keys are two-field alleles given the shared protein sequence of these alleles.
 
 ```python
 genie.seqs # mature protein sequences
 genie.full_seqs # full protein sequences
+genie.nuc_seqs # full nucleotide sequences
 ```
 
-#### Retrieve amino acid position from mature protein sequence
+#### Retrieve amino acid or nucleotide position from mature protein sequence
 
-To get a given amino acid position from a given HLA allele, you can use the `getAA` function. This function is 1-indexed to match standard IMGT/HLA database nomenclature.
+To get a given amino acid (or nucleotide) position from a given HLA allele, you can use the `getAA` or `getNuc` functions. These functions are 1-indexed to match standard IMGT/HLA database nomenclature.
 
 For this and following functions, if a three- or four-field allele name is passed, a call is made to `py-ard` to reduce to the two-field level.
 
 ```python
 genie.getAA("A*01:01",1) # returns "G"
+genie.getNuc("A*01:01",1) # returns "A"
 ```
 
 #### Retrieve amino acid substring from mature protein sequence
