@@ -25,6 +25,7 @@ class GENIE:
     ):
         # set values for needed variables
         self._data_dir = data_dir
+        self.ungap = ungap
 
         # add an ard object
         self.ard = pyard.init(imgt_version)
@@ -33,7 +34,7 @@ class GENIE:
         self.db_connection = db.create_db_connection(data_dir, imgt_version)
 
         # load sequence data from database
-        if ungap:
+        if self.ungap:
             self.full_seqs = dr.generate_ungapped_tables(
                 self.db_connection, imgt_version
             )
@@ -243,32 +244,62 @@ class GENIE:
         # get the ARD sequence
         return self.seqs[allele][: self.xrds[locus]]
 
-    def listIncompletes(self, locus: str):
+    def listIncompletes(self, locus: str, seqtype: str = "prot"):
         """
         List the incomplete alleles in the database
 
         :param locus: The locus to list the incomplete alleles from
+        :param seqtype: The sequence type to list the incomplete alleles for (prot or nuc)
         :return: A list of incomplete alleles
         """
 
-        return dr.generate_incomplete_table(self.db_connection, locus, self.seqs)
+        if seqtype == "prot":
+            return dr.generate_incomplete_table(
+                self.db_connection, locus, seqtype, self.seqs
+            )
+        elif seqtype == "nuc":
+            return dr.generate_incomplete_table(
+                self.db_connection, locus, seqtype, self.nuc_seqs
+            )
+        else:
+            print("Invalid sequence type specified")
 
-    def listCompletes(self, locus: str):
+    def listCompletes(self, locus: str, seqtype: str = "prot"):
         """
         List the complete alleles in the database
 
         :param locus: The locus to list the complete alleles from
+        :param seqtype: The sequence type to list the complete alleles for (prot or nuc)
         :return: A list of complete alleles
         """
 
-        return dr.generate_completed_table(self.db_connection, locus, self.seqs)
+        if seqtype == "prot":
+            return dr.generate_completed_table(
+                self.db_connection, locus, seqtype, self.seqs
+            )
+        elif seqtype == "nuc":
+            return dr.generate_completed_table(
+                self.db_connection, locus, seqtype, self.nuc_seqs
+            )
+        else:
+            print("Invalid sequence type specified")
 
-    def listExtendeds(self, locus: str):
+    def listExtendeds(self, locus: str, seqtype: str = "prot"):
         """
         List the extended alleles in the database
 
         :param locus: The locus to list the extended alleles from
+        :param seqtype: The sequence type to list the extended alleles for (prot or nuc)
         :return: A list of extended alleles
         """
 
-        return dr.generate_extended_table(self.db_connection, locus, self.seqs)
+        if seqtype == "prot":
+            return dr.generate_extended_table(
+                self.db_connection, locus, seqtype, self.ungap, self.seqs
+            )
+        elif seqtype == "nuc":
+            return dr.generate_extended_table(
+                self.db_connection, locus, seqtype, self.ungap, self.nuc_seqs
+            )
+        else:
+            print("Invalid sequence type specified")

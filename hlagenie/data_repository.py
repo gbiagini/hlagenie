@@ -170,7 +170,9 @@ def generate_ungapped_tables(db_conn: sqlite3.Connection, imgt_version):
     return ungapped_seqs
 
 
-def generate_completed_table(db_conn: sqlite3.Connection, locus: str, seqs: dict):
+def generate_completed_table(
+    db_conn: sqlite3.Connection, locus: str, seqtype: str, seqs: dict
+):
     """
     Create table with list of allele with completed sequences
 
@@ -178,13 +180,15 @@ def generate_completed_table(db_conn: sqlite3.Connection, locus: str, seqs: dict
     :type db_conn: sqlite3.Connection
     :param locus: HLA locus to generate completed table for
     :type locus: str
+    :param seqtype: sequence type to generate completed table for
+    :type seqtype: str
     :param seqs: dictionary of sequences
     :type seqs: dict
     :return: list of alleles with completed sequences
     """
 
-    if db.table_exists(db_conn, f"{locus}_completed"):
-        return db.load_set(db_conn, f"{locus}_completed", ("allele"))
+    if db.table_exists(db_conn, f"{locus}_completed_{seqtype}"):
+        return db.load_set(db_conn, f"{locus}_completed_{seqtype}", ("allele"))
 
     # get the reference sequence
     ref_allele = config["refseq"][locus]
@@ -209,12 +213,14 @@ def generate_completed_table(db_conn: sqlite3.Connection, locus: str, seqs: dict
     completed = [allele for allele in completed if not allele[-1].isalpha()]
 
     # save the list to the database
-    db.save_set(db_conn, f"{locus}_completed", set(completed), ("allele"))
+    db.save_set(db_conn, f"{locus}_completed_{seqtype}", set(completed), ("allele"))
 
     return completed
 
 
-def generate_incomplete_table(db_conn: sqlite3.Connection, locus: str, seqs: dict):
+def generate_incomplete_table(
+    db_conn: sqlite3.Connection, locus: str, seqtype: str, seqs: dict
+):
     """
     Create table with list of allele with incomplete sequences
 
@@ -222,13 +228,15 @@ def generate_incomplete_table(db_conn: sqlite3.Connection, locus: str, seqs: dic
     :type db_conn: sqlite3.Connection
     :param locus: HLA locus to generate incomplete table for
     :type locus: str
+    :param seqtype: sequence type to generate incomplete table for
+    :type seqtype: str
     :param seqs: dictionary of sequences
     :type seqs: dict
     :return: list of alleles with incomplete sequences
     """
 
-    if db.table_exists(db_conn, f"{locus}_incomplete"):
-        return db.load_set(db_conn, f"{locus}_incomplete", ("allele"))
+    if db.table_exists(db_conn, f"{locus}_incomplete_{seqtype}"):
+        return db.load_set(db_conn, f"{locus}_incomplete_{seqtype}", ("allele"))
 
     # get the reference sequence
     ref_allele = config["refseq"][locus]
@@ -253,12 +261,14 @@ def generate_incomplete_table(db_conn: sqlite3.Connection, locus: str, seqs: dic
     incomplete = [allele for allele in incomplete if not allele[-1].isalpha()]
 
     # save the list to the database
-    db.save_set(db_conn, f"{locus}_incomplete", set(incomplete), ("allele"))
+    db.save_set(db_conn, f"{locus}_incomplete_{seqtype}", set(incomplete), ("allele"))
 
     return incomplete
 
 
-def generate_extended_table(db_conn: sqlite3.Connection, locus: str, seqs: dict):
+def generate_extended_table(
+    db_conn: sqlite3.Connection, locus: str, seqtype: str, ungap: bool, seqs: dict
+):
     """
     Create table with list of allele with extended sequences
 
@@ -266,13 +276,17 @@ def generate_extended_table(db_conn: sqlite3.Connection, locus: str, seqs: dict)
     :type db_conn: sqlite3.Connection
     :param locus: HLA locus to generate extended table for
     :type locus: str
+    :param seqtype: sequence type to generate extended table for
+    :type seqtype: str
+    :param ungap: whether ungapped sequences were used
+    :type ungap: bool
     :param seqs: dictionary of sequences
     :type seqs: dict
     :return: list of alleles with extended sequences
     """
 
-    if db.table_exists(db_conn, f"{locus}_extended"):
-        return db.load_set(db_conn, f"{locus}_extended", ("allele"))
+    if db.table_exists(db_conn, f"{locus}_extended_{seqtype}"):
+        return db.load_set(db_conn, f"{locus}_extended_{seqtype}", ("allele"))
 
     # get the reference sequence
     ref_allele = config["refseq"][locus]
@@ -280,21 +294,28 @@ def generate_extended_table(db_conn: sqlite3.Connection, locus: str, seqs: dict)
     # get the reference sequence
     ref_seq = seqs[ref_allele]
 
-    # get the gaps in the reference sequence
-    gaps = len(find_gaps(ref_seq))
-
     # limit to alleles in locus
     loc_seqs = {
         allele: seq for allele, seq in seqs.items() if allele.split("*")[0] == locus
     }
 
-    # initialize list to store extended alleles
-    extended = [
-        allele for allele, seq in loc_seqs.items() if len(find_gaps(seq)) < gaps
-    ]
+    # check if ungap=True was used
+    if ungap:
+        # get the length of the reference sequence
+        ref_len = len(ref_seq)
+
+        # initialize list to store extended alleles
+        extended = [allele for allele, seq in loc_seqs.items() if len(seq) > ref_len]
+    else:
+        # get the gaps in the reference sequence
+        gaps = len(find_gaps(ref_seq))
+        # initialize list to store extended alleles
+        extended = [
+            allele for allele, seq in loc_seqs.items() if len(find_gaps(seq)) < gaps
+        ]
 
     # save the list to the database
-    db.save_set(db_conn, f"{locus}_extended", set(extended), ("allele"))
+    db.save_set(db_conn, f"{locus}_extended_{seqtype}", set(extended), ("allele"))
 
     return extended
 
