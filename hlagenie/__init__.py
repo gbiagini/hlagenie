@@ -1,7 +1,7 @@
 from .configs import config  # for configurations
 
 __author__ = "Giovanni Biagini"
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 
 def init(
