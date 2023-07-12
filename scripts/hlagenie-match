@@ -26,14 +26,14 @@ if __name__ == "__main__":
         help="Second allele to compare",
     )
     parser.add_argument(
-        "--recip-haplo",
-        dest="recip_haplo",
-        help="Recipient haplotype to compare",
+        "--recip-geno",
+        dest="recip_geno",
+        help="Recipient genotype to compare",
     )
     parser.add_argument(
-        "--donor-haplo",
-        dest="donor_haplo",
-        help="Donor haplotype to compare",
+        "--donor-geno",
+        dest="donor_geno",
+        help="Donor genotype to compare",
     )
     parser.add_argument(
         "-p",
@@ -110,15 +110,15 @@ if __name__ == "__main__":
         else:
             print("Please enter two alleles to compare")
 
-    # check to see if haplotypes were entered
-    if args.recip_haplo:
-        # make sure donor haplotype was entered also
-        if args.donor_haplo:
-            # split haplo strings
-            r_allele1, r_allele2 = args.recip_haplo.split("+")
+    # check to see if genotypes were entered
+    if args.recip_geno:
+        # make sure donor genotype was entered also
+        if args.donor_geno:
+            # split geno strings
+            r_allele1, r_allele2 = args.recip_geno.split("+")
             r_allele1 = ard.redux(r_allele1, "U2")
             r_allele2 = ard.redux(r_allele2, "U2")
-            d_allele1, d_allele2 = args.donor_haplo.split("+")
+            d_allele1, d_allele2 = args.donor_geno.split("+")
             d_allele1 = ard.redux(d_allele1, "U2")
             d_allele2 = ard.redux(d_allele2, "U2")
 
@@ -164,4 +164,4 @@ if __name__ == "__main__":
                     )
                 print(f"Mismatches: {count}")
         else:
-            print("Please enter both donor and recipient haplotype to compare")
+            print("Please enter both donor and recipient genotype to compare")
