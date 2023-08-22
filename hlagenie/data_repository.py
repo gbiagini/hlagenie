@@ -578,8 +578,7 @@ def generate_ungapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version):
 
         ## iterate through the sequence alignment
         for record in multi_seq:
-            ### use py-ard to get two-field allele
-            allele = ard.redux(record.id, "U2")
+            allele = record.id
 
             ### only add allele if not already present to avoid overwriting with less complete sequence
             if allele not in loc_seqs.keys():
@@ -633,8 +632,7 @@ def generate_gapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version):
 
         ## iterate through the sequence alignment
         for record in multi_seq:
-            ### use py-ard to get two-field allele
-            allele = ard.redux(record.id, "U2")
+            allele = record.id
 
             ### only add allele if not already present to avoid overwriting with less complete sequence
             if allele not in loc_seqs.keys():
@@ -662,6 +660,6 @@ def set_db_version(db_connection: sqlite3.Connection, imgt_version):
     if version:
         return version
 
-    db.set_user_version(db_connection, int(version))
-    print("Version:", version)
-    return version
+    db.set_user_version(db_connection, int(imgt_version))
+    print("Version:", imgt_version)
+    return imgt_version
