@@ -193,8 +193,12 @@ def generate_completed_table(
     if db.table_exists(db_conn, f"{locus}_completed_{seqtype}"):
         return db.load_set(db_conn, f"{locus}_completed_{seqtype}", ("allele"))
 
-    # get the reference sequence
-    ref_allele = config["refseq"][locus]
+    if seqtype == "prot":
+        # get the reference sequence
+        ref_allele = config["refseq"][locus]
+    else:
+        # get the reference sequence
+        ref_allele = config["refseq_full"][locus]
 
     # get the reference sequence
     ref_seq = seqs[ref_allele]
@@ -241,8 +245,12 @@ def generate_incomplete_table(
     if db.table_exists(db_conn, f"{locus}_incomplete_{seqtype}"):
         return db.load_set(db_conn, f"{locus}_incomplete_{seqtype}", ("allele"))
 
-    # get the reference sequence
-    ref_allele = config["refseq"][locus]
+    if seqtype == "prot":
+        # get the reference sequence
+        ref_allele = config["refseq"][locus]
+    else:
+        # get the reference sequence
+        ref_allele = config["refseq_full"][locus]
 
     # get the reference sequence
     ref_seq = seqs[ref_allele]
@@ -291,8 +299,12 @@ def generate_extended_table(
     if db.table_exists(db_conn, f"{locus}_extended_{seqtype}"):
         return db.load_set(db_conn, f"{locus}_extended_{seqtype}", ("allele"))
 
-    # get the reference sequence
-    ref_allele = config["refseq"][locus]
+    if seqtype == "prot":
+        # get the reference sequence
+        ref_allele = config["refseq"][locus]
+    else:
+        # get the reference sequence
+        ref_allele = config["refseq_full"][locus]
 
     # get the reference sequence
     ref_seq = seqs[ref_allele]
@@ -562,9 +574,9 @@ def generate_ungapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version):
         multi_seq = load_nucleotide_alignment(imgt_version, locus)
 
         # get the reference sequence
-        ref_allele = config["refseq"][locus]
+        ref_allele = config["refseq_full"][locus]
         for record in multi_seq:
-            if ard.redux(record.id, "U2") == ref_allele:
+            if record.id == ref_allele:
                 ref_seq = str(record.seq)
                 break
 
