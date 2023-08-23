@@ -25,10 +25,10 @@ def create_db_connection(data_dir, imgt_version):
     db_filename = f"{data_dir}/hlagenie-{imgt_version}.db"
 
     # Check if imgt_version is valid
-    if not pathlib.Path(db_filename).exists():
-        all_versions = get_imgt_db_versions()
-        if str(imgt_version) not in all_versions:
-            raise ValueError(f"{imgt_version} is not a valid IMGT version")
+    # if not pathlib.Path(db_filename).exists():
+    #    all_versions = get_imgt_db_versions()
+    #    if str(imgt_version) not in all_versions:
+    #        raise ValueError(f"{imgt_version} is not a valid IMGT version")
 
     # Create the data directory if it doesn't exist
     if not pathlib.Path(data_dir).exists():
