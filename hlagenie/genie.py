@@ -32,8 +32,7 @@ class GENIE:
         if imgt_version == "Latest":
             imgt_version = load_latest_version()
 
-        # add an ard object
-        self.ard = pyard.init(imgt_version)
+        self.imgt_version = imgt_version
 
         # create database connection to SQLite database
         self.db_connection = db.create_db_connection(data_dir, imgt_version)
@@ -79,7 +78,12 @@ class GENIE:
         """
 
         if allele.count(":") > 1:
-            allele = self.ard.redux(allele, "U2")
+            try:
+                allele = self.ard.redux(allele, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele = self.ard.redux(allele, "U2")
 
         # get the amino acid at the specified position
         return self.seqs[allele][position - 1]
@@ -95,7 +99,12 @@ class GENIE:
         """
 
         if allele.count(":") > 1:
-            allele = self.ard.redux(allele, "U2")
+            try:
+                allele = self.ard.redux(allele, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele = self.ard.redux(allele, "U2")
 
         # get the nucleotide at the specified position
         return self.nuc_seqs[allele][position - 1]
@@ -111,7 +120,12 @@ class GENIE:
         """
 
         if allele.count(":") > 1:
-            allele = self.ard.redux(allele, "U2")
+            try:
+                allele = self.ard.redux(allele, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele = self.ard.redux(allele, "U2")
 
         # get the amino acid substring
         return self.seqs[allele][start - 1 : stop]
@@ -126,7 +140,12 @@ class GENIE:
         """
 
         if allele.count(":") > 1:
-            allele = self.ard.redux(allele, "U2")
+            try:
+                allele = self.ard.redux(allele, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele = self.ard.redux(allele, "U2")
 
         # get the epitope string
         return "_".join(
@@ -144,9 +163,19 @@ class GENIE:
         """
 
         if allele1.count(":") > 1:
-            allele1 = self.ard.redux(allele1, "U2")
+            try:
+                allele1 = self.ard.redux(allele1, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele1 = self.ard.redux(allele1, "U2")
         if allele2.count(":") > 1:
-            allele2 = self.ard.redux(allele2, "U2")
+            try:
+                allele2 = self.ard.redux(allele2, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele2 = self.ard.redux(allele2, "U2")
 
         # get the amino acid at the specified position for each allele
         aa1 = self.getAA(allele1, position)
@@ -174,13 +203,33 @@ class GENIE:
         :return: The number of amino acid mismatches between the two alleles at the specified position
         """
         if allele1donor.count(":") > 1:
-            allele1donor = self.ard.redux(allele1donor, "U2")
+            try:
+                allele1donor = self.ard.redux(allele1donor, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele1donor = self.ard.redux(allele1donor, "U2")
         if allele2donor.count(":") > 1:
-            allele2donor = self.ard.redux(allele2donor, "U2")
+            try:
+                allele2donor = self.ard.redux(allele2donor, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele2donor = self.ard.redux(allele2donor, "U2")
         if allele1recip.count(":") > 1:
-            allele1recip = self.ard.redux(allele1recip, "U2")
+            try:
+                allele1recip = self.ard.redux(allele1recip, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele1recip = self.ard.redux(allele1recip, "U2")
         if allele2recip.count(":") > 1:
-            allele2recip = self.ard.redux(allele2recip, "U2")
+            try:
+                allele2recip = self.ard.redux(allele2recip, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele2recip = self.ard.redux(allele2recip, "U2")
 
         # check if donor is homozygous
         donor_homozygous = False
@@ -234,7 +283,12 @@ class GENIE:
 
         # reduce to two field if greater than two field
         if allele.count(":") > 1:
-            allele = self.ard.redux(allele, "U2")
+            try:
+                allele = self.ard.redux(allele, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele = self.ard.redux(allele, "U2")
 
         # get locus
         locus = allele.split("*")[0]
@@ -252,7 +306,12 @@ class GENIE:
 
         # reduce to two field if greater than two field
         if allele.count(":") > 1:
-            allele = self.ard.redux(allele, "U2")
+            try:
+                allele = self.ard.redux(allele, "U2")
+            except AttributeError:
+                # add an ard object
+                self.ard = pyard.init(self.imgt_version)
+                allele = self.ard.redux(allele, "U2")
 
         # get locus
         locus = allele.split("*")[0]
