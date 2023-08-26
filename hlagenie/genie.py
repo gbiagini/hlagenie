@@ -23,6 +23,7 @@ class GENIE:
         data_dir: str = None,
         cache_size: int = config["DEFAULT_CACHE_SIZE"],
         ungap: bool = True,
+        imputed: bool = False,
     ):
         # set values for needed variables
         self._data_dir = data_dir
@@ -35,7 +36,7 @@ class GENIE:
         self.imgt_version = imgt_version
 
         # create database connection to SQLite database
-        self.db_connection = db.create_db_connection(data_dir, imgt_version)
+        self.db_connection = db.create_db_connection(data_dir, imgt_version, imputed)
 
         # save the IMGT version
         dr.set_db_version(self.db_connection, imgt_version)
@@ -43,18 +44,20 @@ class GENIE:
         # load sequence data from database
         if self.ungap:
             self.full_seqs = dr.generate_ungapped_tables(
-                self.db_connection, imgt_version
+                self.db_connection, imgt_version, imputed
             )
             self.nuc_seqs = dr.generate_ungapped_nuc_tables(
-                self.db_connection, imgt_version
+                self.db_connection, imgt_version, imputed
             )
             self.seqs = dr.generate_ungapped_mature_tables(self.db_connection)
             self.ards = dr.generate_ungapped_ard_table(self.db_connection, self.seqs)
             self.xrds = dr.generate_ungapped_xrd_table(self.db_connection, self.seqs)
         else:
-            self.full_seqs = dr.generate_gapped_tables(self.db_connection, imgt_version)
+            self.full_seqs = dr.generate_gapped_tables(
+                self.db_connection, imgt_version, imputed
+            )
             self.nuc_seqs = dr.generate_gapped_nuc_tables(
-                self.db_connection, imgt_version
+                self.db_connection, imgt_version, imputed
             )
             self.seqs = dr.generate_gapped_mature_tables(self.db_connection)
             self.ards = dr.generate_gapped_ard_table(self.db_connection, self.seqs)
