@@ -37,7 +37,7 @@ class GENIE:
         self.imgt_version = imgt_version
 
         # make sure imputation method is valid
-        if imputation_method not in ["nearest", "nearest10"]:
+        if imputation_method not in ["nearest", "nearest10", "nearest10_weighted"]:
             raise ValueError(
                 "Invalid imputation method specified, must be nearest or nearest10"
             )
