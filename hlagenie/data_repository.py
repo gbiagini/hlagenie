@@ -13,7 +13,9 @@ from .misc import find_gaps, regex_gen, coordinate, coordinate_end
 import pyard  # for HLA nomenclature
 
 
-def generate_gapped_tables(db_conn: sqlite3.Connection, imgt_version, imputed):
+def generate_gapped_tables(
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+):
     """
     Create tables with gapped sequences for every allele in the IMGT/HLA database for each locus
 
@@ -34,7 +36,9 @@ def generate_gapped_tables(db_conn: sqlite3.Connection, imgt_version, imputed):
     # retrieve multiple sequence alignment for each locus
     for locus in config["loci"]:
         # load the sequence alignment
-        multi_seq = load_sequence_alignment(imgt_version, locus, imputed)
+        multi_seq = load_sequence_alignment(
+            imgt_version, locus, imputed, imputation_method
+        )
 
         # turn the sequence alignment into a dictionary
 
@@ -112,7 +116,9 @@ def generate_gapped_mature_tables(db_conn: sqlite3.Connection):
 
 
 # TODO - consider if this should leave positions which are simply unknown (current) or also remove these
-def generate_ungapped_tables(db_conn: sqlite3.Connection, imgt_version, imputed):
+def generate_ungapped_tables(
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+):
     """
     Create tables with ungapped sequences for every allele in the IMGT/HLA database for each locus
 
@@ -133,7 +139,9 @@ def generate_ungapped_tables(db_conn: sqlite3.Connection, imgt_version, imputed)
     # retrieve multiple sequence alignment for each locus
     for locus in config["loci"]:
         # load the sequence alignment
-        multi_seq = load_sequence_alignment(imgt_version, locus, imputed)
+        multi_seq = load_sequence_alignment(
+            imgt_version, locus, imputed, imputation_method
+        )
 
         # get the reference sequence
         ref_allele = config["refseq"][locus]
@@ -559,7 +567,9 @@ def generate_ungapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
     return xrd_ends
 
 
-def generate_ungapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version, imputed):
+def generate_ungapped_nuc_tables(
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+):
     """Generate a table with ungapped nucleotide sequences for every locus
 
     :param db_conn: The database connection object
@@ -579,7 +589,9 @@ def generate_ungapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version, impu
     # retrieve multiple sequence alignment for each locus
     for locus in config["loci"]:
         # load the nucleotide sequence alignment
-        multi_seq = load_nucleotide_alignment(imgt_version, locus, imputed)
+        multi_seq = load_nucleotide_alignment(
+            imgt_version, locus, imputed, imputation_method
+        )
 
         # get the reference sequence
         ref_allele = config["refseq_full"][locus]
@@ -626,7 +638,9 @@ def generate_ungapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version, impu
     return ungapped_seqs
 
 
-def generate_gapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version, imputed):
+def generate_gapped_nuc_tables(
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+):
     """
     Create tables with gapped nucleotide sequences for every allele in the IMGT/HLA database for each locus
 
@@ -647,7 +661,9 @@ def generate_gapped_nuc_tables(db_conn: sqlite3.Connection, imgt_version, impute
     # retrieve multiple sequence alignment for each locus
     for locus in config["loci"]:
         # load the sequence alignment
-        multi_seq = load_nucleotide_alignment(imgt_version, locus, imputed)
+        multi_seq = load_nucleotide_alignment(
+            imgt_version, locus, imputed, imputation_method
+        )
 
         # turn the sequence alignment into a dictionary
 

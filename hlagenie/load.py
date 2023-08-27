@@ -5,7 +5,9 @@ from Bio import AlignIO
 from urllib.error import URLError
 
 
-def load_sequence_alignment(imgt_version: str, loc: str, imputed: bool):
+def load_sequence_alignment(
+    imgt_version: str, loc: str, imputed: bool, imputation_method: str
+):
     """Retrieve sequence alignment from the IMGTHLA GitHub repository and store in a Named Temporary File until processed into the database
 
     :param imgt_version: The version of the IMGT/HLA database to use
@@ -22,11 +24,14 @@ def load_sequence_alignment(imgt_version: str, loc: str, imputed: bool):
         IMGT_HLA_URL = (
             "https://raw.githubusercontent.com/gbiagini/hla-imputed-sequences"
         )
+        msf_p_url = (
+            f"{IMGT_HLA_URL}/{imgt_version}/{imputation_method}/msf/{loc}_prot.msf"
+        )
     else:
         # GitHub URL for IMGT/HLA
         IMGT_HLA_URL = "https://raw.githubusercontent.com/ANHIG/IMGTHLA"
+        msf_p_url = f"{IMGT_HLA_URL}/{imgt_version}/msf/{loc}_prot.msf"
 
-    msf_p_url = f"{IMGT_HLA_URL}/{imgt_version}/msf/{loc}_prot.msf"
     try:
         # download the file data from the IMGT_HLA GitHub repository
         request = requests.get(msf_p_url, timeout=15)
@@ -51,7 +56,9 @@ def load_sequence_alignment(imgt_version: str, loc: str, imputed: bool):
     return multi_seq
 
 
-def load_nucleotide_alignment(imgt_version: str, loc: str, imputed: bool):
+def load_nucleotide_alignment(
+    imgt_version: str, loc: str, imputed: bool, imputation_method: str
+):
     """Retrieve nucleotide alignment from the IMGTHLA GitHub repository and store in a Named Temporary File until processed into the database
 
     :param imgt_version: The version of the IMGT/HLA database to use
@@ -69,11 +76,14 @@ def load_nucleotide_alignment(imgt_version: str, loc: str, imputed: bool):
         IMGT_HLA_URL = (
             "https://raw.githubusercontent.com/gbiagini/hla-imputed-sequences"
         )
+        msf_n_url = (
+            f"{IMGT_HLA_URL}/{imgt_version}/{imputation_method}/msf/{loc}_nuc.msf"
+        )
     else:
         # GitHub URL for IMGT/HLA
         IMGT_HLA_URL = "https://raw.githubusercontent.com/ANHIG/IMGTHLA"
+        msf_n_url = f"{IMGT_HLA_URL}/{imgt_version}/msf/{loc}_nuc.msf"
 
-    msf_n_url = f"{IMGT_HLA_URL}/{imgt_version}/msf/{loc}_nuc.msf"
     try:
         # download the file data from the IMGT_HLA GitHub repository
         request = requests.get(msf_n_url, timeout=15)

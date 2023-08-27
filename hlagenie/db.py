@@ -8,7 +8,7 @@ from .load import load_latest_version
 from hlagenie.configs import config  # configurations
 
 
-def create_db_connection(data_dir, imgt_version, imputed):
+def create_db_connection(data_dir, imgt_version, imputed, imputation_method):
     """
     Create connection to SQLite database
 
@@ -23,7 +23,9 @@ def create_db_connection(data_dir, imgt_version, imputed):
 
     # set database filename
     if imputed:
-        db_filename = f"{data_dir}/hlagenie-{imgt_version}-imputed.db"
+        db_filename = (
+            f"{data_dir}/hlagenie-{imgt_version}-imputed-{imputation_method}.db"
+        )
     else:
         db_filename = f"{data_dir}/hlagenie-{imgt_version}.db"
 

@@ -10,6 +10,7 @@ def init(
     cache_size: int = config["DEFAULT_CACHE_SIZE"],
     ungap: bool = True,
     imputed: bool = False,
+    imputation_method: str = "nearest",
 ):
     from .genie import GENIE
 
@@ -19,6 +20,7 @@ def init(
         cache_size=cache_size,
         ungap=ungap,
         imputed=imputed,
+        imputation_method=imputation_method,
     )
 
     return genie
