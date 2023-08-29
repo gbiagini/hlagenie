@@ -91,7 +91,7 @@ def load_nucleotide_alignment(
         request = requests.get(msf_n_url, timeout=15)
 
         # create a Named Temporary File to store the file data
-        tf = tempfile.NamedTemporaryFile()
+        tf = tempfile.NamedTemporaryFile(delete=False)
 
         # write the file data to the Named Temporary File
         tf.write(request.content)
@@ -101,6 +101,7 @@ def load_nucleotide_alignment(
 
         # close the Named Temporary File, deleting it
         tf.close()
+        os.unlink(tf.name)
 
     except URLError as e:
         print(f"Error downloading {msf_n_url}", e, file=sys.stderr)
