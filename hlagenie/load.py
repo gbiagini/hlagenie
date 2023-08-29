@@ -1,4 +1,5 @@
 import sys
+import os
 import tempfile
 import requests
 from Bio import AlignIO
@@ -37,7 +38,7 @@ def load_sequence_alignment(
         request = requests.get(msf_p_url, timeout=15)
 
         # create a Named Temporary File to store the file data
-        tf = tempfile.NamedTemporaryFile()
+        tf = tempfile.NamedTemporaryFile(delete=False)
 
         # write the file data to the Named Temporary File
         tf.write(request.content)
@@ -47,6 +48,7 @@ def load_sequence_alignment(
 
         # close the Named Temporary File, deleting it
         tf.close()
+        os.unlink(tf.name)
 
     except URLError as e:
         print(f"Error downloading {msf_p_url}", e, file=sys.stderr)
