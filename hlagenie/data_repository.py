@@ -14,7 +14,7 @@ import pyard  # for HLA nomenclature
 
 
 def generate_gapped_tables(
-    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method, load_mac
 ):
     """
     Create tables with gapped sequences for every allele in the IMGT/HLA database for each locus
@@ -28,7 +28,7 @@ def generate_gapped_tables(
         return db.load_gapped_tables(db_conn)
 
     # initialize pyard object
-    ard = pyard.init(imgt_version)
+    ard = pyard.init(imgt_version, load_mac)
 
     # initialize the dictionary to store all sequences
     gapped_seqs = {}
@@ -117,7 +117,7 @@ def generate_gapped_mature_tables(db_conn: sqlite3.Connection):
 
 # TODO - consider if this should leave positions which are simply unknown (current) or also remove these
 def generate_ungapped_tables(
-    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method, load_mac
 ):
     """
     Create tables with ungapped sequences for every allele in the IMGT/HLA database for each locus
@@ -131,7 +131,7 @@ def generate_ungapped_tables(
         return db.load_ungapped_tables(db_conn)
 
     # initialize pyard object
-    ard = pyard.init(imgt_version)
+    ard = pyard.init(imgt_version, load_mac)
 
     # initialize the dictionary to store all sequences
     ungapped_seqs = {}
@@ -568,7 +568,7 @@ def generate_ungapped_xrd_table(db_conn: sqlite3.Connection, seqs: dict):
 
 
 def generate_ungapped_nuc_tables(
-    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method, load_mac
 ):
     """Generate a table with ungapped nucleotide sequences for every locus
 
@@ -581,7 +581,7 @@ def generate_ungapped_nuc_tables(
         return db.load_ungapped_nuc_tables(db_conn)
 
     # initialize pyard object
-    ard = pyard.init(imgt_version)
+    ard = pyard.init(imgt_version, load_mac)
 
     # initialize the dictionary to store all sequences
     ungapped_seqs = {}
@@ -639,7 +639,7 @@ def generate_ungapped_nuc_tables(
 
 
 def generate_gapped_nuc_tables(
-    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method
+    db_conn: sqlite3.Connection, imgt_version, imputed, imputation_method, load_mac
 ):
     """
     Create tables with gapped nucleotide sequences for every allele in the IMGT/HLA database for each locus
@@ -653,7 +653,7 @@ def generate_gapped_nuc_tables(
         return db.load_gapped_nuc_tables(db_conn)
 
     # initialize pyard object
-    ard = pyard.init(imgt_version)
+    ard = pyard.init(imgt_version, load_mac)
 
     # initialize the dictionary to store all sequences
     gapped_seqs = {}

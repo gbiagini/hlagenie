@@ -21,6 +21,7 @@ class GENIE:
         self,
         imgt_version: str = "Latest",
         data_dir: str = None,
+        load_mac: bool = True,
         cache_size: int = config["DEFAULT_CACHE_SIZE"],
         ungap: bool = True,
         imputed: bool = False,
@@ -29,6 +30,7 @@ class GENIE:
         # set values for needed variables
         self._data_dir = data_dir
         self.ungap = ungap
+        self.load_mac = load_mac
 
         # if database version is "Latest", get the latest version
         if imgt_version == "Latest":
@@ -94,7 +96,7 @@ class GENIE:
                 allele = self.ard.redux(allele, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele = self.ard.redux(allele, "U2")
 
         # get the amino acid at the specified position
@@ -115,7 +117,7 @@ class GENIE:
                 allele = self.ard.redux(allele, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele = self.ard.redux(allele, "U2")
 
         # get the nucleotide at the specified position
@@ -136,7 +138,7 @@ class GENIE:
                 allele = self.ard.redux(allele, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele = self.ard.redux(allele, "U2")
 
         # get the amino acid substring
@@ -156,7 +158,7 @@ class GENIE:
                 allele = self.ard.redux(allele, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele = self.ard.redux(allele, "U2")
 
         # get the epitope string
@@ -179,14 +181,14 @@ class GENIE:
                 allele1 = self.ard.redux(allele1, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele1 = self.ard.redux(allele1, "U2")
         if allele2.count(":") > 1:
             try:
                 allele2 = self.ard.redux(allele2, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele2 = self.ard.redux(allele2, "U2")
 
         # get the amino acid at the specified position for each allele
@@ -219,28 +221,28 @@ class GENIE:
                 allele1donor = self.ard.redux(allele1donor, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele1donor = self.ard.redux(allele1donor, "U2")
         if allele2donor.count(":") > 1:
             try:
                 allele2donor = self.ard.redux(allele2donor, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele2donor = self.ard.redux(allele2donor, "U2")
         if allele1recip.count(":") > 1:
             try:
                 allele1recip = self.ard.redux(allele1recip, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele1recip = self.ard.redux(allele1recip, "U2")
         if allele2recip.count(":") > 1:
             try:
                 allele2recip = self.ard.redux(allele2recip, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele2recip = self.ard.redux(allele2recip, "U2")
 
         # check if donor is homozygous
@@ -299,7 +301,7 @@ class GENIE:
                 allele = self.ard.redux(allele, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele = self.ard.redux(allele, "U2")
 
         # get locus
@@ -322,7 +324,7 @@ class GENIE:
                 allele = self.ard.redux(allele, "U2")
             except AttributeError:
                 # add an ard object
-                self.ard = pyard.init(self.imgt_version)
+                self.ard = pyard.init(self.imgt_version, self.load_mac)
                 allele = self.ard.redux(allele, "U2")
 
         # get locus
