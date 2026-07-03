@@ -150,8 +150,8 @@ def generate_ungapped_tables(
                 ref_seq = str(record.seq)
                 break
 
-        # get the gaps in the reference sequence
-        gaps = find_gaps(ref_seq)
+        # get the gaps in the reference sequence (set for O(1) membership below)
+        gaps = set(find_gaps(ref_seq))
 
         # turn the sequence alignment into a dictionary
 
@@ -598,8 +598,8 @@ def generate_ungapped_nuc_tables(
                 ref_seq = str(record.seq)
                 break
 
-        # get the gaps in the reference sequence
-        gaps = find_gaps(ref_seq)
+        # get the gaps in the reference sequence (set for O(1) membership below)
+        gaps = set(find_gaps(ref_seq))
 
         # turn the sequence alignment into a dictionary
 
