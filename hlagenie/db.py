@@ -1,10 +1,6 @@
 import sqlite3  # for database operations
 import pathlib  # for path manipulation
-from .misc import (
-    get_imgt_db_versions,
-    get_default_db_directory,
-)  # for getting default database directory
-from .load import load_latest_version
+from .misc import get_default_db_directory  # for getting default database directory
 from hlagenie.configs import config  # configurations
 
 

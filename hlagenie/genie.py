@@ -3,7 +3,6 @@
 # aa_matching.py - module for amino acid matching functions
 
 # import necessary modules
-from pathlib import Path  # for path manipulation
 import pyard  # for HLA nomenclature
 from . import db  # for database operations
 from . import data_repository as dr  # for data repository operations
@@ -31,6 +30,10 @@ class GENIE:
         self._data_dir = data_dir
         self.ungap = ungap
         self.load_mac = load_mac
+
+        # py-ard object, initialized lazily on first multi-field allele lookup
+        # so the cached fast path never pays py-ard's initialization cost
+        self.ard = None
 
         # if database version is "Latest", get the latest version
         if imgt_version == "Latest":
@@ -82,6 +85,24 @@ class GENIE:
         if hasattr(self, "db_connection") and self.db_connection:
             self.db_connection.close()
 
+    def _reduce(self, allele: str) -> str:
+        """Reduce a >2-field allele name to its two-field form via py-ard.
+
+        Names that are already two-field (or coarser) are returned unchanged.
+        The py-ard object is created on first use and reused thereafter.
+
+        :param allele: allele name to reduce
+        :return: two-field allele name
+        """
+
+        if allele.count(":") <= 1:
+            return allele
+
+        if self.ard is None:
+            self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
+
+        return self.ard.redux(allele, "U2")
+
     def getAA(self, allele: str, position: int):
         """
         Get the amino acid at a specific position in an allele
@@ -91,13 +112,7 @@ class GENIE:
         :return: The amino acid at the specified position
         """
 
-        if allele.count(":") > 1:
-            try:
-                allele = self.ard.redux(allele, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele = self.ard.redux(allele, "U2")
+        allele = self._reduce(allele)
 
         # get the amino acid at the specified position
         return self.seqs[allele][position - 1]
@@ -112,13 +127,7 @@ class GENIE:
         :return: The nucleotide at the specified position
         """
 
-        if allele.count(":") > 1:
-            try:
-                allele = self.ard.redux(allele, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele = self.ard.redux(allele, "U2")
+        allele = self._reduce(allele)
 
         # get the nucleotide at the specified position
         return self.nuc_seqs[allele][position - 1]
@@ -133,13 +142,7 @@ class GENIE:
         :return: The amino acid substring from the specified positions
         """
 
-        if allele.count(":") > 1:
-            try:
-                allele = self.ard.redux(allele, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele = self.ard.redux(allele, "U2")
+        allele = self._reduce(allele)
 
         # get the amino acid substring
         return self.seqs[allele][start - 1 : stop]
@@ -153,13 +156,7 @@ class GENIE:
         :return: The epitope string from the specified positions
         """
 
-        if allele.count(":") > 1:
-            try:
-                allele = self.ard.redux(allele, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele = self.ard.redux(allele, "U2")
+        allele = self._reduce(allele)
 
         # get the epitope string
         return "_".join(
@@ -176,20 +173,8 @@ class GENIE:
         :return: True if the alleles have a mismatch at the specified position, False otherwise
         """
 
-        if allele1.count(":") > 1:
-            try:
-                allele1 = self.ard.redux(allele1, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele1 = self.ard.redux(allele1, "U2")
-        if allele2.count(":") > 1:
-            try:
-                allele2 = self.ard.redux(allele2, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele2 = self.ard.redux(allele2, "U2")
+        allele1 = self._reduce(allele1)
+        allele2 = self._reduce(allele2)
 
         # get the amino acid at the specified position for each allele
         aa1 = self.getAA(allele1, position)
@@ -216,34 +201,10 @@ class GENIE:
         :param position: The position to check
         :return: The number of amino acid mismatches between the two alleles at the specified position
         """
-        if allele1donor.count(":") > 1:
-            try:
-                allele1donor = self.ard.redux(allele1donor, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele1donor = self.ard.redux(allele1donor, "U2")
-        if allele2donor.count(":") > 1:
-            try:
-                allele2donor = self.ard.redux(allele2donor, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele2donor = self.ard.redux(allele2donor, "U2")
-        if allele1recip.count(":") > 1:
-            try:
-                allele1recip = self.ard.redux(allele1recip, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele1recip = self.ard.redux(allele1recip, "U2")
-        if allele2recip.count(":") > 1:
-            try:
-                allele2recip = self.ard.redux(allele2recip, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele2recip = self.ard.redux(allele2recip, "U2")
+        allele1donor = self._reduce(allele1donor)
+        allele2donor = self._reduce(allele2donor)
+        allele1recip = self._reduce(allele1recip)
+        allele2recip = self._reduce(allele2recip)
 
         # check if donor is homozygous
         donor_homozygous = False
@@ -296,13 +257,7 @@ class GENIE:
         """
 
         # reduce to two field if greater than two field
-        if allele.count(":") > 1:
-            try:
-                allele = self.ard.redux(allele, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele = self.ard.redux(allele, "U2")
+        allele = self._reduce(allele)
 
         # get locus
         locus = allele.split("*")[0]
@@ -319,13 +274,7 @@ class GENIE:
         """
 
         # reduce to two field if greater than two field
-        if allele.count(":") > 1:
-            try:
-                allele = self.ard.redux(allele, "U2")
-            except AttributeError:
-                # add an ard object
-                self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
-                allele = self.ard.redux(allele, "U2")
+        allele = self._reduce(allele)
 
         # get locus
         locus = allele.split("*")[0]

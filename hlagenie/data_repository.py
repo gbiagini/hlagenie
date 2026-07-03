@@ -1,13 +1,9 @@
-import copy
-import functools
 import sqlite3
-import hlagenie.load
 from .load import (
     load_sequence_alignment,
     load_nucleotide_alignment,
 )
 from hlagenie.configs import config
-from hlagenie.smart_sort import smart_sort_comparator
 from . import db
 from .misc import find_gaps, regex_gen, coordinate, coordinate_end
 import pyard  # for HLA nomenclature
