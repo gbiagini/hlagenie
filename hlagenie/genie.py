@@ -58,7 +58,7 @@ class GENIE:
         # load sequence data from database
         if self.ungap:
             self.full_seqs = dr.generate_ungapped_tables(
-                self.db_connection, imgt_version, imputed, imputation_method, self.load_mac
+                self.db_connection, imgt_version, imputed, imputation_method
             )
             self.nuc_seqs = dr.generate_ungapped_nuc_tables(
                 self.db_connection, imgt_version, imputed, imputation_method
@@ -68,7 +68,7 @@ class GENIE:
             self.xrds = dr.generate_ungapped_xrd_table(self.db_connection, self.seqs)
         else:
             self.full_seqs = dr.generate_gapped_tables(
-                self.db_connection, imgt_version, imputed, imputation_method, self.load_mac
+                self.db_connection, imgt_version, imputed, imputation_method
             )
             self.nuc_seqs = dr.generate_gapped_nuc_tables(
                 self.db_connection, imgt_version, imputed, imputation_method
