@@ -81,23 +81,23 @@ The first time an object is instantiated with a given IMGT/HLA database version,
 
 The `GENIE` object contains dictionaries of amino acid and nucleotide sequences for each HLA allele. The keys for the dictionaries are the HLA allele names. The values are the genetic sequences.
 
-All of the keys are two-field alleles given the shared protein sequence of these alleles.
+The protein dictionaries (`seqs`, `full_seqs`) are keyed by two-field alleles, given the shared protein sequence of these alleles. The nucleotide dictionary (`nuc_seqs`) is keyed by full (three- or four-field) allele names, because alleles that share a two-field name can still differ in their nucleotide sequence (synonymous substitutions).
 
 ```python
-genie.seqs # mature protein sequences
-genie.full_seqs # full protein sequences
-genie.nuc_seqs # full nucleotide sequences
+genie.seqs # mature protein sequences (keyed by two-field allele)
+genie.full_seqs # full protein sequences (keyed by two-field allele)
+genie.nuc_seqs # full nucleotide sequences (keyed by full allele name)
 ```
 
 #### Retrieve amino acid or nucleotide position from mature protein sequence
 
 To get a given amino acid (or nucleotide) position from a given HLA allele, you can use the `getAA` or `getNuc` functions. These functions are 1-indexed to match standard IMGT/HLA database nomenclature.
 
-For this and following functions, if a three- or four-field allele name is passed, a call is made to `py-ard` to reduce to the two-field level.
+For the amino-acid functions, if a three- or four-field allele name is passed, a call is made to `py-ard` to reduce to the two-field level. `getNuc` is the exception: it requires a full (three- or four-field) allele name and does not reduce, since one two-field name maps to several distinct nucleotide sequences. Passing a bare two-field name (that is not itself a valid key) raises a `ValueError`.
 
 ```python
 genie.getAA("A*01:01",1) # returns "G"
-genie.getNuc("A*01:01",1) # returns "A"
+genie.getNuc("A*01:01:01:01",1) # returns "A"
 ```
 
 #### Retrieve amino acid substring from mature protein sequence

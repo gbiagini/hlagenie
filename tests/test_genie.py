@@ -57,16 +57,23 @@ class TestGetAA:
 
 
 class TestGetNuc:
+    def test_full_allele_name(self, genie):
+        # nuc_seqs is keyed by full allele IDs; the exact name is looked up.
+        assert "".join(genie.getNuc("A*01:01:01:01", i) for i in range(1, 7)) == "ATGGCC"
+
     def test_two_field_only_allele(self, genie):
         # A*01:06 exists in the nucleotide alignment under its 2-field name.
         assert "".join(genie.getNuc("A*01:06", i) for i in range(1, 7)) == "ATGGCC"
 
-    def test_known_limitation_common_allele_raises(self, genie):
-        # KNOWN QUIRK: nuc_seqs is keyed by full (4-field) allele IDs, but getNuc
-        # reduces multi-colon input to the 2-field name via py-ard, which is then
-        # absent from nuc_seqs. Documented here so an intentional fix will flag it.
-        with pytest.raises(KeyError):
-            genie.getNuc("A*01:01:01:01", 1)
+    def test_ambiguous_two_field_name_raises(self, genie):
+        # A*01:01 maps to many distinct nucleotide sequences, so a bare two-field
+        # name is rejected: a full (3/4-field) name is required.
+        with pytest.raises(ValueError):
+            genie.getNuc("A*01:01", 1)
+
+    def test_unknown_allele_raises(self, genie):
+        with pytest.raises(ValueError):
+            genie.getNuc("A*99:99:99:99", 1)
 
 
 class TestGetPeptide:

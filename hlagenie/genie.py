@@ -120,14 +120,26 @@ class GENIE:
     def getNuc(self, allele: str, position: int):
         """Get the nucleotide at a specific position in an allele
 
-        :param allele: The allele to get the nucleotide from
+        Unlike the amino-acid lookups, a full (3- or 4-field) allele name is
+        required: a single two-field name maps to many distinct nucleotide
+        sequences (synonymous differences at the third field), so the name is
+        not reduced. Alleles whose only name is two-field are looked up directly.
+
+        :param allele: The full allele name to get the nucleotide from
         :type allele: str
         :param position: The position to get the nucleotide from
         :type position: int
         :return: The nucleotide at the specified position
+        :raises ValueError: if the allele has no nucleotide sequence (e.g. a
+            bare two-field name that maps to multiple sequences, or an unknown allele)
         """
 
-        allele = self._reduce(allele)
+        if allele not in self.nuc_seqs:
+            raise ValueError(
+                f"No nucleotide sequence for {allele!r}. getNuc requires a full "
+                "(3- or 4-field) allele name, because one two-field name maps to "
+                "multiple distinct nucleotide sequences."
+            )
 
         # get the nucleotide at the specified position
         return self.nuc_seqs[allele][position - 1]
