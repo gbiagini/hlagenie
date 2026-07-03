@@ -35,6 +35,12 @@ class GENIE:
         # so the cached fast path never pays py-ard's initialization cost
         self.ard = None
 
+        # nucleotide sequences are large (~40 MB) and unused by protein-only
+        # workflows, so they are built/loaded lazily on first access
+        self._nuc_seqs = None
+        self._imputed = imputed
+        self._imputation_method = imputation_method
+
         # if database version is "Latest", get the latest version
         if imgt_version == "Latest":
             imgt_version = load_latest_version()
@@ -60,9 +66,6 @@ class GENIE:
             self.full_seqs = dr.generate_ungapped_tables(
                 self.db_connection, imgt_version, imputed, imputation_method
             )
-            self.nuc_seqs = dr.generate_ungapped_nuc_tables(
-                self.db_connection, imgt_version, imputed, imputation_method
-            )
             self.seqs = dr.generate_ungapped_mature_tables(self.db_connection)
             self.ards = dr.generate_ungapped_ard_table(self.db_connection, self.seqs)
             self.xrds = dr.generate_ungapped_xrd_table(self.db_connection, self.seqs)
@@ -70,12 +73,29 @@ class GENIE:
             self.full_seqs = dr.generate_gapped_tables(
                 self.db_connection, imgt_version, imputed, imputation_method
             )
-            self.nuc_seqs = dr.generate_gapped_nuc_tables(
-                self.db_connection, imgt_version, imputed, imputation_method
-            )
             self.seqs = dr.generate_gapped_mature_tables(self.db_connection)
             self.ards = dr.generate_gapped_ard_table(self.db_connection, self.seqs)
             self.xrds = dr.generate_gapped_xrd_table(self.db_connection, self.seqs)
+
+    @property
+    def nuc_seqs(self):
+        """Nucleotide sequences keyed by full allele name (built on first use)."""
+        if self._nuc_seqs is None:
+            if self.ungap:
+                self._nuc_seqs = dr.generate_ungapped_nuc_tables(
+                    self.db_connection,
+                    self.imgt_version,
+                    self._imputed,
+                    self._imputation_method,
+                )
+            else:
+                self._nuc_seqs = dr.generate_gapped_nuc_tables(
+                    self.db_connection,
+                    self.imgt_version,
+                    self._imputed,
+                    self._imputation_method,
+                )
+        return self._nuc_seqs
 
     def __del__(self):
         """Close the db connection, when HLAGenie instance goes away
