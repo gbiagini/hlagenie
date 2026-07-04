@@ -2,11 +2,43 @@ import sqlite3
 from .load import (
     load_sequence_alignment,
     load_nucleotide_alignment,
+    load_allele_names,
+    load_g_group_alleles,
+    load_p_group_pairs,
 )
 from hlagenie.configs import config
 from . import db
+from . import redux
 from .misc import find_gaps, regex_gen, coordinate, coordinate_end
-import pyard  # for HLA nomenclature
+
+
+def generate_nomenclature(db_conn: sqlite3.Connection, imgt_version):
+    """Build (or load) the allele-reduction data structures for a version.
+
+    Returns the ``valid_alleles`` set and the ``p_not_g`` mapping used by
+    :func:`hlagenie.redux.reduce_to_two_field`. Built from the IMGT/HLA
+    nomenclature files and cached in the database so it is only downloaded once.
+
+    :param db_conn: The database connection object
+    :param imgt_version: IMGT/HLA database version
+    :return: tuple of (valid_alleles set, p_not_g dict)
+    """
+    if db.table_exists(db_conn, "valid_alleles") and db.table_exists(
+        db_conn, "p_not_g"
+    ):
+        valid_alleles = db.load_set(db_conn, "valid_alleles", ("allele"))
+        p_not_g = db.load_dict(db_conn, "p_not_g", ("allele", "lgx"))
+        return valid_alleles, p_not_g
+
+    valid_alleles = redux.build_valid_alleles(load_allele_names(imgt_version))
+    p_not_g = redux.build_p_not_g(
+        load_g_group_alleles(imgt_version), load_p_group_pairs(imgt_version)
+    )
+
+    db.save_set(db_conn, "valid_alleles", valid_alleles, ("allele"))
+    db.save_dict(db_conn, "p_not_g", p_not_g, ("allele", "lgx"))
+
+    return valid_alleles, p_not_g
 
 
 def generate_gapped_tables(
@@ -23,9 +55,8 @@ def generate_gapped_tables(
     if db.tables_exist(db_conn, config["gapped_tables"]):
         return db.load_gapped_tables(db_conn)
 
-    # initialize pyard object; MAC codes are never needed here because we only
-    # reduce concrete MSF record IDs, so skip loading them to speed the build
-    ard = pyard.init(imgt_version, load_mac=False)
+    # load the nomenclature data used to reduce allele names to two fields
+    valid_alleles, p_not_g = generate_nomenclature(db_conn, imgt_version)
 
     # initialize the dictionary to store all sequences
     gapped_seqs = {}
@@ -45,7 +76,7 @@ def generate_gapped_tables(
         ## iterate through the sequence alignment
         for record in multi_seq:
             ### use py-ard to get two-field allele
-            allele = ard.redux(record.id, "U2")
+            allele = redux.reduce_to_two_field(record.id, valid_alleles, p_not_g)
 
             # for DRB345, skip if not specific locus
             if allele.split("*")[0] != locus:
@@ -127,9 +158,8 @@ def generate_ungapped_tables(
     if db.tables_exist(db_conn, config["ungapped_tables"]):
         return db.load_ungapped_tables(db_conn)
 
-    # initialize pyard object; MAC codes are never needed here because we only
-    # reduce concrete MSF record IDs, so skip loading them to speed the build
-    ard = pyard.init(imgt_version, load_mac=False)
+    # load the nomenclature data used to reduce allele names to two fields
+    valid_alleles, p_not_g = generate_nomenclature(db_conn, imgt_version)
 
     # initialize the dictionary to store all sequences
     ungapped_seqs = {}
@@ -144,7 +174,7 @@ def generate_ungapped_tables(
         # get the reference sequence
         ref_allele = config["refseq"][locus]
         for record in multi_seq:
-            if ard.redux(record.id, "U2") == ref_allele:
+            if redux.reduce_to_two_field(record.id, valid_alleles, p_not_g) == ref_allele:
                 ref_seq = str(record.seq)
                 break
 
@@ -159,7 +189,7 @@ def generate_ungapped_tables(
         ## iterate through the sequence alignment
         for record in multi_seq:
             ### use py-ard to get two-field allele
-            allele = ard.redux(record.id, "U2")
+            allele = redux.reduce_to_two_field(record.id, valid_alleles, p_not_g)
 
             # for DRB345, skip if not specific locus
             if allele.split("*")[0] != locus:

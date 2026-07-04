@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse
 import sys
-import pyard
 import hlagenie
 from hlagenie.misc import get_imgt_version
 
@@ -59,7 +58,6 @@ if __name__ == "__main__":
 
     imgt_version = get_imgt_version(args.imgt_version)
 
-    ard = pyard.init(imgt_version)
     genie = hlagenie.init(imgt_version, ungap=False)
 
     # check to see if allele1 was entered
@@ -67,8 +65,8 @@ if __name__ == "__main__":
         # make sure allele2 was entered also
         if args.allele2:
             # redux alleles
-            allele1 = ard.redux(args.allele1, "U2")
-            allele2 = ard.redux(args.allele2, "U2")
+            allele1 = genie.reduce_allele(args.allele1)
+            allele2 = genie.reduce_allele(args.allele2)
 
             if allele1.split("*")[0] != allele2.split("*")[0]:
                 print("Alleles are not of the same locus")
@@ -116,11 +114,11 @@ if __name__ == "__main__":
         if args.donor_geno:
             # split geno strings
             r_allele1, r_allele2 = args.recip_geno.split("+")
-            r_allele1 = ard.redux(r_allele1, "U2")
-            r_allele2 = ard.redux(r_allele2, "U2")
+            r_allele1 = genie.reduce_allele(r_allele1)
+            r_allele2 = genie.reduce_allele(r_allele2)
             d_allele1, d_allele2 = args.donor_geno.split("+")
-            d_allele1 = ard.redux(d_allele1, "U2")
-            d_allele2 = ard.redux(d_allele2, "U2")
+            d_allele1 = genie.reduce_allele(d_allele1)
+            d_allele2 = genie.reduce_allele(d_allele2)
 
             if (
                 r_allele1.split("*")[0] != r_allele2.split("*")[0]

@@ -1,9 +1,13 @@
 import sys
 import os
+import csv
 import tempfile
 import requests
 from Bio import AlignIO
 from urllib.error import URLError
+
+# Base URL for the IMGT/HLA GitHub repository (same source py-ard reads).
+IMGT_HLA_URL = "https://raw.githubusercontent.com/ANHIG/IMGTHLA"
 
 
 def load_sequence_alignment(
@@ -136,3 +140,71 @@ def load_latest_version():
             # # version: IPD-IMGT/HLA 3.51.0
             version = l.split()[-1].replace(".", "")
     return version
+
+
+# The following loaders read the same IMGT/HLA nomenclature files that py-ard
+# uses to build its allele reduction tables. They let HLAGenie reduce allele
+# names to two-field form without depending on py-ard at runtime.
+
+
+def _fetch_lines(url: str):
+    """Download a text file and return its stripped lines."""
+    try:
+        response = requests.get(url, timeout=15)
+    except URLError as e:
+        print(f"Error downloading {url}", e, file=sys.stderr)
+        sys.exit(1)
+    return [line.strip() for line in response.text.splitlines()]
+
+
+def load_allele_names(imgt_version: str):
+    """Return the list of allele names from ``Allelelist.<version>.txt``.
+
+    :param imgt_version: IMGT/HLA database version
+    :return: list of allele names (e.g. ``A*01:01:01:01``)
+    """
+    if imgt_version == "3130":
+        # 3130 was renamed to 3131 for the Allelelist file only (per py-ard).
+        imgt_version = "3131"
+    url = f"{IMGT_HLA_URL}/Latest/allelelist/Allelelist.{imgt_version}.txt"
+    lines = _fetch_lines(url)
+    # Skip the first 6 header lines; the 7th line is the CSV header.
+    reader = csv.DictReader(lines[6:])
+    return [row["Allele"] for row in reader]
+
+
+def load_g_group_alleles(imgt_version: str):
+    """Return full allele names appearing in ``hla_nom_g.txt``.
+
+    :param imgt_version: IMGT/HLA database version
+    :return: list of full allele names (locus + allele)
+    """
+    url = f"{IMGT_HLA_URL}/{imgt_version}/wmda/hla_nom_g.txt"
+    alleles = []
+    for line in _fetch_lines(url)[6:]:
+        if not line:
+            continue
+        fields = line.split(";")
+        if len(fields) >= 3 and fields[1] and fields[2]:
+            locus, allele_list = fields[0], fields[1]
+            alleles.extend(locus + a for a in allele_list.split("/"))
+    return alleles
+
+
+def load_p_group_pairs(imgt_version: str):
+    """Return ``(full_allele, full_p_group_name)`` pairs from ``hla_nom_p.txt``.
+
+    :param imgt_version: IMGT/HLA database version
+    :return: list of ``(allele, p_group)`` tuples
+    """
+    url = f"{IMGT_HLA_URL}/{imgt_version}/wmda/hla_nom_p.txt"
+    pairs = []
+    for line in _fetch_lines(url)[6:]:
+        if not line:
+            continue
+        fields = line.split(";")
+        if len(fields) >= 3 and fields[1] and fields[2]:
+            locus, allele_list, p_group = fields[0], fields[1], fields[2]
+            full_p = locus + p_group
+            pairs.extend((locus + a, full_p) for a in allele_list.split("/"))
+    return pairs

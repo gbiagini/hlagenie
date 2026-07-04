@@ -3,9 +3,9 @@
 # aa_matching.py - module for amino acid matching functions
 
 # import necessary modules
-import pyard  # for HLA nomenclature
 from . import db  # for database operations
 from . import data_repository as dr  # for data repository operations
+from . import redux  # for two-field allele reduction (ported from py-ard)
 from .load import load_latest_version  # get most updated version of IMGT database
 from .configs import config  # for configurations
 
@@ -31,9 +31,10 @@ class GENIE:
         self.ungap = ungap
         self.load_mac = load_mac
 
-        # py-ard object, initialized lazily on first multi-field allele lookup
-        # so the cached fast path never pays py-ard's initialization cost
-        self.ard = None
+        # allele-reduction data, loaded lazily on first multi-field allele
+        # lookup so the cached fast path never pays the loading cost
+        self._valid_alleles = None
+        self._p_not_g = None
 
         # nucleotide sequences are large (~40 MB) and unused by protein-only
         # workflows, so they are built/loaded lazily on first access
@@ -106,10 +107,10 @@ class GENIE:
             self.db_connection.close()
 
     def _reduce(self, allele: str) -> str:
-        """Reduce a >2-field allele name to its two-field form via py-ard.
+        """Reduce a >2-field allele name to its two-field (U2) form.
 
         Names that are already two-field (or coarser) are returned unchanged.
-        The py-ard object is created on first use and reused thereafter.
+        The nomenclature data is loaded on first use and reused thereafter.
 
         :param allele: allele name to reduce
         :return: two-field allele name
@@ -118,10 +119,23 @@ class GENIE:
         if allele.count(":") <= 1:
             return allele
 
-        if self.ard is None:
-            self.ard = pyard.init(self.imgt_version, load_mac=self.load_mac)
+        if self._valid_alleles is None:
+            self._valid_alleles, self._p_not_g = dr.generate_nomenclature(
+                self.db_connection, self.imgt_version
+            )
 
-        return self.ard.redux(allele, "U2")
+        return redux.reduce_to_two_field(allele, self._valid_alleles, self._p_not_g)
+
+    def reduce_allele(self, allele: str) -> str:
+        """Reduce an allele name to its two-field (U2) form.
+
+        Public wrapper around the internal reducer. Faithful to py-ard's
+        ``redux(allele, "U2")`` for standard allele names.
+
+        :param allele: allele name to reduce
+        :return: two-field allele name
+        """
+        return self._reduce(allele)
 
     def getAA(self, allele: str, position: int):
         """

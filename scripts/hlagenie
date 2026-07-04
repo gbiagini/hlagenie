@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse
 import sys
-import pyard
 import hlagenie
 from hlagenie.misc import get_imgt_version
 
@@ -53,15 +52,13 @@ if __name__ == "__main__":
 
     imgt_version = get_imgt_version(args.imgt_version)
 
-    ard = pyard.init(imgt_version)
-
-    allele = ard.redux(args.allele, "U2")
-    positions = args.positions
-
     if args.gapped:
         genie = hlagenie.init(imgt_version, ungap=False)
     else:
         genie = hlagenie.init(imgt_version)
+
+    allele = genie.reduce_allele(args.allele)
+    positions = args.positions
 
     if args.ard:
         print(genie.getARD(allele))

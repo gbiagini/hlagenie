@@ -1,3 +1,2 @@
 biopython>=1.81
 requests>=2.31.0
-py-ard>=2.1.0

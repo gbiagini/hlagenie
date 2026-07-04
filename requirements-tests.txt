@@ -1,3 +1,5 @@
 pytest>=7.3.2
 behave>=1.2.6
 PyHamcrest>=2.0.2
+# py-ard is the oracle for the U2 reduction parity test only; not a runtime dep.
+py-ard>=2.1.0
